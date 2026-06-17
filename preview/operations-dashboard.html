@@ -306,6 +306,7 @@
 
     .badge.green { background: var(--green-soft); color: var(--green); }
     .badge.blue { background: var(--blue-soft); color: var(--blue); }
+    .badge.gray { background: #edf1f5; color: #728095; }
     .badge.amber { background: var(--amber-soft); color: var(--amber); }
     .badge.red { background: var(--red-soft); color: var(--red); }
 
@@ -790,6 +791,16 @@
       align-items: center;
     }
 
+    .mini-pie-wrap .mini-row {
+      grid-template-columns: 12px auto auto;
+      justify-content: start;
+      gap: 6px;
+    }
+
+    .mini-pie-wrap .mini-row strong {
+      margin-left: 2px;
+    }
+
     .mini-pie {
       width: 140px;
       height: 140px;
@@ -874,9 +885,9 @@
           </article>
           <article class="kpi">
             <div>
-              <div class="kpi-label">인심사 건수</div>
+              <div class="kpi-label">자동심사제외 건수</div>
               <div class="kpi-value">3,406</div>
-              <div class="kpi-desc">인심사 및 제외 유형 포함</div>
+              <div class="kpi-desc">자동지급 탈락 및 인심사 바로 배분 유형 전체</div>
             </div>
           </article>
           <article class="kpi">
@@ -1057,13 +1068,25 @@
           <div class="panel-body section-stack">
             <section class="callout">
               <div class="callout-title">
-                <h3>상태 요약</h3>
+                <h3>자동지급 유형 상위 변화</h3>
               </div>
-              <ul class="callout-list">
-                <li class="callout-item"><span>자동지급률</span><span><span class="badge blue">증가 +0.7pp</span></span></li>
-                <li class="callout-item"><span>처리효율</span><span><span class="badge red">감소 -0.4pp</span></span></li>
-                <li class="callout-item"><span>자동지급 유형 상위 변화</span><span>A01 비중 확대</span></li>
-              </ul>
+              <div class="table-wrap segment-table" style="margin-top:0;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>유형코드</th>
+                      <th>설명</th>
+                      <th>변화 정보</th>
+                      <th>전월 대비 변화량</th>
+                    </tr>
+                  </thead>
+                  <tbody id="auto-change-body">
+                    <tr>
+                      <td colspan="4" class="empty-row">자동지급 유형 변화 데이터가 없습니다.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
 
             <section class="callout">
@@ -1075,7 +1098,9 @@
                   <thead>
                     <tr>
                       <th>변경 전 segment</th>
+                      <th>설명</th>
                       <th>변경 후 segment</th>
+                      <th>설명</th>
                       <th>건수</th>
                       <th>비중</th>
                       <th>변화 사유</th>
@@ -1084,21 +1109,27 @@
                   <tbody id="segment-body">
                     <tr>
                       <td>S1. 소액 통원</td>
+                      <td>소액 통원</td>
                       <td>S2. 확정 통원</td>
+                      <td>확정 통원</td>
                       <td>248</td>
                       <td>2.1%</td>
                       <td>최근 3개월 진료패턴 안정화</td>
                     </tr>
                     <tr>
                       <td>S3. 반복 입원</td>
+                      <td>반복 입원</td>
                       <td>S4. 제외 검토</td>
+                      <td>제외 검토</td>
                       <td>96</td>
                       <td>0.8%</td>
                       <td>필수 확인 항목 누락</td>
                     </tr>
                     <tr>
                       <td>S2. 확정 통원</td>
+                      <td>확정 통원</td>
                       <td>S1. 소액 통원</td>
+                      <td>소액 통원</td>
                       <td>184</td>
                       <td>1.6%</td>
                       <td>청구금액 하향 및 단순화</td>
@@ -1129,11 +1160,11 @@
                   </tr>
                 </thead>
                 <tbody id="auto-type-body">
-                  <tr><td>A01 비대면 소액 통원</td><td>1,740</td><td>36.1%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A02 입원 제증명료 단순건</td><td>880</td><td>18.3%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A03 통원 급여전용건</td><td>620</td><td>12.8%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A04 실손24 소액건</td><td>540</td><td>11.2%</td><td><span class="badge blue">On</span></td></tr>
-                  <tr><td>A05 검증된 반복 통원</td><td>320</td><td>6.7%</td><td><span class="badge amber">Off</span></td></tr>
+                  <tr><td>비대면 소액 통원</td><td>1,740</td><td>36.1%</td><td><span class="badge blue">On</span></td></tr>
+                  <tr><td>입원 제증명료 단순건</td><td>880</td><td>18.3%</td><td><span class="badge blue">On</span></td></tr>
+                  <tr><td>통원 급여전용건</td><td>620</td><td>12.8%</td><td><span class="badge blue">On</span></td></tr>
+                  <tr><td>실손24 소액건</td><td>540</td><td>11.2%</td><td><span class="badge blue">On</span></td></tr>
+                  <tr><td>검증된 반복 통원</td><td>320</td><td>6.7%</td><td><span class="badge blue">On</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -1222,6 +1253,14 @@
     const SUPABASE_KEY = 'sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD';
     const REPORT_SEND_API_URL = 'http://127.0.0.1:8787/api/send-monthly-report';
     const REPORT_FILE_INDEX_PATH = '../data/private/report_file_index.json';
+    const REPORT_FILE_INDEX_SEED = [
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v6.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v6.docx","updated_at":"2026-06-16T12:48:34.397189Z","size_bytes":39115},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v5.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v5.docx","updated_at":"2026-06-16T12:42:58.918312Z","size_bytes":39078},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v4.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v4.docx","updated_at":"2026-06-16T12:37:55.320482Z","size_bytes":39076},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v3.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v3.docx","updated_at":"2026-06-16T12:29:52.505884Z","size_bytes":38769},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_template_v2.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_template_v2.docx","updated_at":"2026-06-16T12:15:13.156883Z","size_bytes":39375},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12.docx","updated_at":"2026-06-16T07:51:00.789567Z","size_bytes":38851}
+    ];
 
     const navItems = document.querySelectorAll('.nav-item[data-view]');
     const views = {
@@ -1234,6 +1273,7 @@
       latestSnapshot: null,
       previousSnapshot: null,
       allClaims: [],
+      autoPaymentTypes: [],
       reportArchives: [],
       reportFileIndex: [],
       subscriptions: [],
@@ -1512,10 +1552,10 @@
     async function loadReportFileIndex() {
       try {
         const response = await fetch(REPORT_FILE_INDEX_PATH);
-        if (!response.ok) return [];
+        if (!response.ok) return REPORT_FILE_INDEX_SEED.slice();
         const payload = await response.json();
         const rows = Array.isArray(payload) ? payload : (payload?.reports || payload?.files || []);
-        return rows
+        const normalized = rows
           .filter((row) => row && row.snapshot_month && row.file_name && row.file_path)
           .slice()
           .sort((a, b) => {
@@ -1523,9 +1563,10 @@
             if (monthCompare !== 0) return monthCompare;
             return String(b.updated_at || b.mtime || '').localeCompare(String(a.updated_at || a.mtime || ''));
           });
+        return normalized.length ? normalized : REPORT_FILE_INDEX_SEED.slice();
       } catch (error) {
         console.warn('Falling back to empty report file index', error);
-        return [];
+        return REPORT_FILE_INDEX_SEED.slice();
       }
     }
 
@@ -1683,6 +1724,7 @@
       const chartBaseY = topPad + plotHeight;
       const gap = plotWidth / series.length;
       const barWidth = Math.min(66, Math.max(28, gap * 0.58));
+      const showAllLabels = series.length <= 12;
       const xForIndex = (index) => leftPad + gap * index + (gap - barWidth) / 2;
       const yForCount = (count) => chartBaseY - (count / maxCount) * plotHeight;
       const yForRate = (rate) => chartBaseY - (rate / maxRate) * plotHeight;
@@ -1690,7 +1732,7 @@
         .map((row, index) => `${xForIndex(index) + barWidth / 2},${yForRate(Number(row.auto_payment_rate))}`)
         .join(' ');
       const countTicks = [0, 500, 1000, 1500, 2000];
-      const rateTicks = [0, 20, 40, 60, 80];
+      const rateTicks = [0, 20, 40, 60];
 
       chartShell.innerHTML = `
         <div class="chart-topline">
@@ -1703,14 +1745,14 @@
             const y = chartBaseY - (tick / maxCount) * plotHeight;
             return `<line x1="${leftPad}" y1="${y}" x2="${chartWidth - rightPad}" y2="${y}" stroke="#e6edf5" stroke-width="1"/>`;
           }).join('')}
-          <g fill="#66748a" font-size="12" font-family="inherit">
+          <g fill="#66748a" font-size="12" font-family="inherit" dominant-baseline="middle">
             ${countTicks.map((tick) => {
-              const y = chartBaseY - (tick / maxCount) * plotHeight + 4;
-              return `<text x="14" y="${y}">${fmtInt(tick)}</text>`;
+              const y = chartBaseY - (tick / maxCount) * plotHeight;
+              return `<text x="${leftPad - 16}" y="${y}" text-anchor="end">${fmtInt(tick)}</text>`;
             }).join('')}
             ${rateTicks.map((tick) => {
-              const y = chartBaseY - (tick / maxRate) * plotHeight + 4;
-              return `<text x="${chartWidth - 12}" y="${y}" text-anchor="end">${tick}%</text>`;
+              const y = chartBaseY - (tick / maxRate) * plotHeight;
+              return `<text x="${chartWidth - rightPad + 16}" y="${y}" text-anchor="start">${tick}%</text>`;
             }).join('')}
           </g>
           ${series.map((row, index) => {
@@ -1728,7 +1770,8 @@
           <g fill="#415168" font-size="12" font-family="inherit">
             ${series.map((row, index) => {
               const x = xForIndex(index) + 2;
-              return `<text x="${x}" y="${chartHeight - 14}">${series.length > 8 && index % 2 === 1 ? '' : row.snapshot_month}</text>`;
+              const label = showAllLabels || index % 2 === 0 ? row.snapshot_month : '';
+              return `<text x="${x}" y="${chartHeight - 14}">${label}</text>`;
             }).join('')}
           </g>
         </svg>
@@ -1796,12 +1839,12 @@
       `;
       card.querySelector('.mini-pie-wrap').innerHTML = `${svg}
         <div class="mini-list">
-          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+          <div class="mini-row">
             <span style="width:12px;height:12px;border-radius:50%;background:#4d84ff;display:inline-block;"></span>
             <span>통원</span>
             <strong>${outpatientPct}%</strong>
           </div>
-          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+          <div class="mini-row">
             <span style="width:12px;height:12px;border-radius:50%;background:#1f9d67;display:inline-block;"></span>
             <span>입원</span>
             <strong>${inpatientPct}%</strong>
@@ -1812,6 +1855,12 @@
 
     function renderChangeSummary(latest, previous, claimRows) {
       const rows = Array.isArray(claimRows) ? claimRows : [];
+      const segmentLabels = {
+        'SEG-A': '소액 통원',
+        'SEG-B': '반복 통원',
+        'SEG-C': '확정 통원',
+        'SEG-D': '제외 검토',
+      };
       const badges = document.querySelectorAll('.change-panel .callout .badge');
       if (badges[0]) {
         badges[0].textContent = latest.status_label;
@@ -1830,9 +1879,7 @@
         stateItems[1].querySelector('span:last-child').innerHTML = `<span class="badge ${badgeClass}">${delta >= 0 ? '증가 ' : '감소 '}${pp(delta)}</span>`;
       }
       if (stateItems[2]) {
-        const topTypeCounts = groupCount(rows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
-        const topType = [...topTypeCounts.entries()].sort((a, b) => b[1] - a[1])[0];
-        stateItems[2].querySelector('span:last-child').textContent = topType ? `${topType[0]} 비중 확대` : '분석 중';
+        stateItems[2].querySelector('span:last-child').textContent = '전월 대비 상위 변화';
       }
 
       const segRows = document.querySelectorAll('#segment-body tr');
@@ -1844,7 +1891,7 @@
       const sortedChanges = [...changes.entries()].sort((a, b) => b[1] - a[1]).slice(0, segRows.length);
       if (!sortedChanges.length) {
         const body = document.getElementById('segment-body');
-        if (body) body.innerHTML = `<tr><td colspan="5" class="empty-row">segment 변화가 없는 월입니다.</td></tr>`;
+        if (body) body.innerHTML = `<tr><td colspan="7" class="empty-row">segment 변화가 없는 월입니다.</td></tr>`;
         return;
       }
       sortedChanges.forEach(([key, count], index) => {
@@ -1854,11 +1901,60 @@
         if (!row) return;
         const cells = row.querySelectorAll('td');
         if (cells[0]) cells[0].textContent = beforeSeg;
-        if (cells[1]) cells[1].textContent = afterSeg;
-        if (cells[2]) cells[2].textContent = fmtInt(count);
-        if (cells[3]) cells[3].textContent = pct((count / rows.length) * 100, 1);
-        if (cells[4]) cells[4].textContent = reason;
+        if (cells[1]) cells[1].textContent = segmentLabels[beforeSeg] || '-';
+        if (cells[2]) cells[2].textContent = afterSeg;
+        if (cells[3]) cells[3].textContent = segmentLabels[afterSeg] || '-';
+        if (cells[4]) cells[4].textContent = fmtInt(count);
+        if (cells[5]) cells[5].textContent = pct((count / rows.length) * 100, 1);
+        if (cells[6]) cells[6].textContent = reason;
       });
+
+      const autoChangeBody = document.getElementById('auto-change-body');
+      if (autoChangeBody) {
+        const prevMonth = previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || '');
+        const prevRows = getClaimsForMonth(prevMonth);
+        const currentRows = rows;
+        const currentCounts = groupCount(currentRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const previousCounts = groupCount(prevRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const codes = new Set([...currentCounts.keys(), ...previousCounts.keys()]);
+        const typeLabels = {
+          A01: '비대면 소액 통원',
+          A02: '입원 제증명료 단순건',
+          A03: '통원 급여전용건',
+          A04: '실손24 소액건',
+          A05: '검증된 반복 통원',
+          A06: '단순 반복 청구',
+          A07: '경증 비급여 단순건',
+          A08: '자동확정 가능건',
+        };
+        const deltas = [...codes].map((code) => {
+          const current = currentCounts.get(code) || 0;
+          const prevCount = previousCounts.get(code) || 0;
+          return {
+            code,
+            label: typeLabels[code] ?? code,
+            current,
+            prevCount,
+            delta: current - prevCount,
+          };
+        }).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)).slice(0, 5);
+
+        if (!deltas.length) {
+          autoChangeBody.innerHTML = `<tr><td colspan="4" class="empty-row">자동지급 유형 변화 데이터가 없습니다.</td></tr>`;
+        } else {
+          autoChangeBody.innerHTML = deltas.map((item) => {
+            const deltaText = `${item.delta >= 0 ? '+' : ''}${fmtInt(item.delta)}건`;
+            const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
+            const changeInfo = item.delta > 0 ? '증가' : item.delta < 0 ? '감소' : '변동 없음';
+            return `<tr>
+              <td>${item.code}</td>
+              <td>${item.label}</td>
+              <td>${changeInfo}</td>
+              <td><span class="badge ${deltaClass}">${deltaText}</span></td>
+            </tr>`;
+          }).join('');
+        }
+      }
     }
 
     function renderAutoPaymentTable(claimRows) {
@@ -1866,6 +1962,12 @@
       if (!tbody) return;
       const rows = Array.isArray(claimRows) ? claimRows : [];
       const autoRows = rows.filter((row) => row.auto_payment_decision === 'AUTO_PAY');
+      const typeMeta = new Map(
+        (Array.isArray(state.autoPaymentTypes) ? state.autoPaymentTypes : []).map((row) => [
+          String(row.type_code || '').trim(),
+          row,
+        ])
+      );
       const counts = groupCount(autoRows, (row) => row.auto_payment_type_code);
       const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
       const total = autoRows.length || 1;
@@ -1874,18 +1976,11 @@
         return;
       }
       tbody.innerHTML = sorted.map(([code, count], index) => {
-        const labels = {
-          A01: 'A01 비대면 소액 통원',
-          A02: 'A02 입원 제증명료 단순건',
-          A03: 'A03 통원 급여전용건',
-          A04: 'A04 실손24 소액건',
-          A05: 'A05 검증된 반복 통원',
-          A06: 'A06 단순 반복 청구',
-          A07: 'A07 경증 비급여 단순건',
-          A08: 'A08 자동확정 가능건',
-        };
-        const badgeClass = index < 3 ? 'green' : index < 4 ? 'blue' : 'amber';
-        return `<tr><td>${labels[code] ?? code}</td><td>${fmtInt(count)}</td><td>${pct((count / total) * 100, 1)}</td><td><span class="badge ${badgeClass}">On</span></td></tr>`;
+        const meta = typeMeta.get(String(code || '').trim()) || {};
+        const isActive = String(meta.active_flag || '').trim().toUpperCase() === 'Y';
+        const badgeClass = isActive ? 'blue' : 'gray';
+        const typeName = meta.type_name || code;
+        return `<tr><td>${typeName}</td><td>${fmtInt(count)}</td><td>${pct((count / total) * 100, 1)}</td><td><span class="badge ${badgeClass}">${isActive ? 'On' : 'Off'}</span></td></tr>`;
       }).join('');
     }
 
@@ -2061,12 +2156,13 @@
     });
 
     async function loadDashboardData() {
-      const [snapshots, latestClaims, reportArchives, reportFileIndex] = await Promise.all([
+      const [snapshots, latestClaims, autoPaymentTypes, reportArchives, reportFileIndex] = await Promise.all([
         supaFetch('/rest/v1/monthly_auto_payment_snapshot_fact', '?select=*&order=snapshot_month.asc'),
         supaFetchAllPages(
           '/rest/v1/claim_payment_fact',
           '?select=claim_month,receipt_channel,treatment_type,auto_payment_decision,auto_payment_type_code,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
         ),
+        supaFetch('/rest/v1/auto_payment_type_definition', '?select=type_code,type_name,active_flag,priority_order&order=priority_order.asc,type_code.asc'),
         supaFetch('/rest/v1/report_archive_fact', '?select=*&order=snapshot_month.desc'),
         loadReportFileIndex(),
       ]);
@@ -2075,6 +2171,7 @@
       state.latestSnapshot = snapshots[snapshots.length - 1];
       state.previousSnapshot = snapshots[snapshots.length - 2] || snapshots[snapshots.length - 1];
       state.allClaims = latestClaims;
+      state.autoPaymentTypes = autoPaymentTypes;
       state.reportArchives = reportArchives;
       state.reportFileIndex = reportFileIndex;
       state.subscriptions = await loadSubscriptionAccounts();
