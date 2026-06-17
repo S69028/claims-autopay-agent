@@ -8,8 +8,10 @@
     "start": "node server.mjs",
     "dev": "node server.mjs"
   },
+  "dependencies": {
+    "nodemailer": "^7.0.10"
+  },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {}
+  "license": "ISC"
 }

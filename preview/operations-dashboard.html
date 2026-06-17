@@ -1251,7 +1251,9 @@
   <script>
     const SUPABASE_URL = 'https://ejgruldmrfbtalplwowr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD';
-    const REPORT_SEND_API_URL = 'http://127.0.0.1:8787/api/send-monthly-report';
+    const REPORT_SEND_API_URL = location.protocol === 'file:'
+      ? 'http://127.0.0.1:8787/api/send-monthly-report'
+      : '/api/send-monthly-report';
     const REPORT_FILE_INDEX_PATH = '../data/private/report_file_index.json';
     const REPORT_FILE_INDEX_SEED = [
       {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v6.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v6.docx","updated_at":"2026-06-16T12:48:34.397189Z","size_bytes":39115},
