@@ -1,21 +1,5 @@
 {
-  "projectName": "claims-autopay-agent",
-  "orgName": "jiyoon-pjt",
   "buildCommand": "npm install",
   "outputDirectory": ".",
-  "framework": "nodejs",
-  "env": [
-    "OPENAI_API_KEY",
-    "ANTHROPIC_API_KEY",
-    "GITHUB_TOKEN",
-    "GH_TOKEN",
-    "REPORT_SMTP_PROVIDER",
-    "REPORT_SMTP_HOST",
-    "REPORT_SMTP_PORT",
-    "REPORT_SMTP_USE_SSL",
-    "REPORT_SMTP_USERNAME",
-    "REPORT_SMTP_PASSWORD",
-    "REPORT_SMTP_FROM",
-    "REPORT_RECIPIENTS_CSV"
-  ]
+  "framework": "node"
 }
