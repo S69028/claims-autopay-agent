@@ -1,0 +1,5 @@
+recipient_name,recipient_email,department,active_flag,created_at,updated_at
+운영관리자,ops.manager@example.com,운영기획,Y,2026-06-01T09:00:00Z,2026-06-01T09:00:00Z
+감사담당자,auditor@example.com,심사관리,Y,2026-06-01T09:00:00Z,2026-06-01T09:00:00Z
+상위보고자,report@example.com,경영지원,Y,2026-06-01T09:00:00Z,2026-06-01T09:00:00Z
+예비수신자,backup@example.com,운영기획,N,2026-06-01T09:00:00Z,2026-06-01T09:00:00Z

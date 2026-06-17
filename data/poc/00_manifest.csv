@@ -1,0 +1,12 @@
+﻿file_name,purpose,rows
+01_auto_payment_type_definition_enriched.csv,enriched definition,100
+02_auto_payment_type_definition_schema.csv,table schema,16
+03_auto_payment_type_definition_sample.csv,sample data,100
+04_auto_payment_exclusion_type_definition_enriched.csv,enriched definition,100
+05_auto_payment_exclusion_type_definition_schema.csv,table schema,16
+06_auto_payment_exclusion_type_definition_sample.csv,sample data,100
+07_claim_payment_dummy_definition_enriched.csv,enriched definition,48
+08_claim_payment_fact_schema.csv,table schema,48
+09_claim_payment_fact_sample.csv,sample data,100
+10_monthly_auto_payment_snapshot_fact_schema.csv,table schema,22
+11_monthly_auto_payment_snapshot_fact_sample.csv,sample data,100

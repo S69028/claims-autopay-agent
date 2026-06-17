@@ -1,0 +1,2098 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>자동지급 현황분석 - 자동지급 운영 모니터링</title>
+  <style>
+    :root {
+      --navy-950: #08111f;
+      --navy-900: #0d1728;
+      --navy-800: #142033;
+      --navy-700: #1d2b43;
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --panel-soft: #f7f9fc;
+      --line: #d8e0ea;
+      --line-strong: #c2cddd;
+      --text: #142033;
+      --muted: #66748a;
+      --blue: #4d84ff;
+      --blue-soft: rgba(77, 132, 255, 0.12);
+      --green: #1f9d67;
+      --green-soft: rgba(31, 157, 103, 0.12);
+      --amber: #c98a1f;
+      --amber-soft: rgba(201, 138, 31, 0.14);
+      --red: #c44d4d;
+      --red-soft: rgba(196, 77, 77, 0.14);
+      --shadow: 0 18px 36px rgba(15, 31, 56, 0.08);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(77, 132, 255, 0.10), transparent 24%),
+        radial-gradient(circle at 95% 8%, rgba(31, 157, 103, 0.08), transparent 18%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 256px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #003cdd;
+      color: #dbe5f2;
+      padding: 28px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,0.04);
+    }
+
+    .brand {
+      padding: 8px 10px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand-kicker {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #319ec6;
+      margin-bottom: 8px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .brand-sub {
+      display: none;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      color: #dce7f7;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav-item.active {
+      background: rgba(77, 132, 255, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(77, 132, 255, 0.26);
+    }
+
+    .nav-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.9;
+      flex: none;
+    }
+
+    .sidebar-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .sidebar-card-label {
+      color: #93a4be;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-card-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f4f8ff;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-card-desc {
+      display: none;
+    }
+
+    .main {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .page-subtitle {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+
+    .topbar-action {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 212px;
+    }
+
+    .topbar-action label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      padding-left: 2px;
+    }
+
+    .topbar-action .select {
+      height: 54px;
+      border-radius: 12px;
+      background: #f5f5f5;
+      border: 1px solid #d7dce3;
+      color: #2b3340;
+      font-size: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    .readonly-field {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: #f5f5f5;
+      border: 1px solid #d7dce3;
+      color: #2b3340;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .select, .search {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      height: 42px;
+      padding: 0 14px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search {
+      min-width: 240px;
+    }
+
+    .grid-kpi {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .kpi {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(216, 224, 234, 0.9);
+      box-shadow: var(--shadow);
+      min-height: 128px;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-top: 10px;
+    }
+
+    .kpi-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .badge.green { background: var(--green-soft); color: var(--green); }
+    .badge.blue { background: var(--blue-soft); color: var(--blue); }
+    .badge.amber { background: var(--amber-soft); color: var(--amber); }
+    .badge.red { background: var(--red-soft); color: var(--red); }
+
+    .file-link {
+      color: var(--blue);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.72fr) minmax(390px, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .content-grid > .panel {
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-grid > .panel .panel-body {
+      flex: 1;
+    }
+
+    .section-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .view {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .view[hidden] {
+      display: none !important;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(216, 224, 234, 0.9);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 18px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .panel-sub {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .panel-body {
+      padding: 16px 18px 18px;
+    }
+
+    .chart-shell {
+      background: linear-gradient(180deg, #fafcff, #f5f8fd);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .chart-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-line {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), #7ba8ff);
+      transform-origin: left center;
+      opacity: 0.9;
+    }
+
+    .chart-line.rate { top: 92px; transform: skewY(-10deg); }
+    .chart-node {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid var(--blue);
+      box-shadow: 0 0 0 6px rgba(77, 132, 255, 0.10);
+    }
+
+    .chart-node.n1 { left: 32px; top: 88px; }
+    .chart-node.n2 { left: 118px; top: 78px; }
+    .chart-node.n3 { left: 204px; top: 66px; }
+    .chart-node.n4 { left: 290px; top: 64px; }
+    .chart-node.n5 { left: 376px; top: 58px; }
+    .chart-node.n6 { left: 462px; top: 54px; }
+
+    .chart-bars {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .bar-group {
+      flex: 1;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .bar-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 82px 1fr 42px;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e7edf5;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), #7eabff);
+    }
+
+    .bar-fill.alt { background: linear-gradient(90deg, #1f9d67, #68c59b); }
+
+    .callout {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      padding: 16px;
+    }
+
+    .callout-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .callout-title h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .callout-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .callout-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text);
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #e4eaf2;
+    }
+
+    .callout-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .callout-item span:last-child { color: var(--muted); text-align: right; }
+
+    .segment-table {
+      margin-top: 8px;
+    }
+
+    .segment-table th,
+    .segment-table td {
+      white-space: nowrap;
+    }
+
+    .segment-table td:last-child {
+      white-space: normal;
+    }
+
+    .table-wrap {
+      margin-top: 4px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .empty-row {
+      padding: 18px 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edf2f7;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    tbody tr:hover { background: #fbfdff; }
+
+    .right-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      border-color: rgba(77, 132, 255, 0.28);
+      background: linear-gradient(180deg, #5a8dff, #3f75f1);
+      color: white;
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .archive-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+      align-items: flex-start;
+    }
+
+    #archive-view .topbar {
+      padding: 16px 24px;
+      gap: 0;
+      min-height: unset;
+      height: auto;
+      display: block;
+      align-self: start;
+    }
+
+    #archive-view .archive-header {
+      align-items: flex-start;
+    }
+
+    #archive-view .archive-header .page-title {
+      font-size: 21px;
+      line-height: 1.08;
+    }
+
+    #archive-view .archive-header .page-subtitle {
+      line-height: 1.35;
+      max-width: 780px;
+    }
+
+    .archive-send-float {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      width: min(396px, calc(100vw - 40px));
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(216, 224, 234, 0.9);
+      box-shadow: 0 18px 36px rgba(15, 31, 56, 0.16);
+      border-radius: 18px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+
+    .archive-send-float-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .archive-send-controls {
+      display: grid;
+      gap: 10px;
+    }
+
+    .archive-control {
+      min-width: 0;
+    }
+
+    .archive-control .select {
+      width: 100%;
+    }
+
+    .archive-status {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      min-height: 18px;
+    }
+
+    .archive-status.green { color: var(--green); }
+    .archive-status.blue { color: var(--blue); }
+    .archive-status.amber { color: var(--amber); }
+    .archive-status.red { color: var(--red); }
+
+    @media (max-width: 1200px) {
+      .archive-send-float {
+        width: min(360px, calc(100vw - 32px));
+      }
+    }
+
+    @media (max-width: 920px) {
+      .archive-send-float {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        width: auto;
+      }
+    }
+
+    .subsection {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mini-card {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      min-height: 212px;
+    }
+
+    .mini-card h4 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .mini-card p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: 52px 1fr 46px;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .mini-track {
+      height: 9px;
+      border-radius: 999px;
+      background: #e7edf5;
+      overflow: hidden;
+    }
+
+    .mini-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), #7eabff);
+    }
+
+    .mini-fill.alt {
+      background: linear-gradient(90deg, #1f9d67, #68c59b);
+    }
+
+    .mini-pie-wrap {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mini-pie {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1280px) {
+      .grid-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content-grid { grid-template-columns: 1fr; }
+      .shell { grid-template-columns: 220px minmax(0, 1fr); }
+    }
+
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .grid-kpi { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 72px 1fr 36px; }
+      .topbar-actions { width: 100%; }
+      .topbar-action { min-width: 0; flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-kicker">Insurance Ops Console</div>
+        <h1 class="brand-title">자동지급 현황분석</h1>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-label">데이터 기준</div>
+        <div class="sidebar-card-value">2025-12 확정</div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-item active" data-view="dashboard"><span class="nav-dot"></span>운영모니터링</div>
+        <div class="nav-item" data-view="archive"><span class="nav-dot"></span>리포트보관함</div>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div id="dashboard-view" class="view">
+        <section class="topbar">
+          <div class="topbar-row">
+            <div>
+              <h2 class="page-title">자동지급 운영 모니터링</h2>
+              <div class="page-subtitle">월말 기준 자동지급 운영 현황을 빠르게 읽고, 전월 대비 변화와 segment 변화를 확인합니다.</div>
+            </div>
+            <div class="topbar-actions">
+              <div class="topbar-action">
+                <label>기준년월</label>
+                <select class="select" id="month-filter">
+                  <option value="">불러오는 중...</option>
+                </select>
+              </div>
+              <div class="topbar-action">
+                <label>조회기간</label>
+                <select class="select" id="period-filter">
+                  <option value="6">최근 6개월</option>
+                  <option value="12">최근 12개월</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid-kpi">
+          <article class="kpi">
+            <div>
+              <div class="kpi-label">자동지급률</div>
+              <div class="kpi-value">58.4%</div>
+              <div class="kpi-desc">전월 대비 <strong style="color: var(--blue);">+0.7pp</strong></div>
+            </div>
+          </article>
+          <article class="kpi">
+            <div>
+              <div class="kpi-label">자동지급 건수</div>
+              <div class="kpi-value">4,820</div>
+              <div class="kpi-desc">월말 스냅샷 기준 집계</div>
+            </div>
+          </article>
+          <article class="kpi">
+            <div>
+              <div class="kpi-label">인심사 건수</div>
+              <div class="kpi-value">3,406</div>
+              <div class="kpi-desc">인심사 및 제외 유형 포함</div>
+            </div>
+          </article>
+          <article class="kpi">
+            <div>
+              <div class="kpi-label">처리효율</div>
+              <div class="kpi-value">52.1%</div>
+              <div class="kpi-desc">전월 대비 <strong style="color: var(--green);">+0.4pp</strong></div>
+            </div>
+          </article>
+          <article class="kpi">
+            <div>
+              <div class="kpi-label">상태 라벨</div>
+              <div class="kpi-value">안정</div>
+              <div class="kpi-desc">기준월 이전 6개월 표준편차 기반 판정</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">자동지급 추이</h3>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="chart-shell">
+                <div class="chart-topline">
+                  <span>좌측 축: 청구건수</span>
+                  <span>우측 축: 자동지급률</span>
+                </div>
+                <svg viewBox="0 0 900 380" width="100%" height="380" role="img" aria-label="청구건수와 자동지급률 듀얼축 차트">
+                  <rect x="0" y="0" width="900" height="380" rx="18" fill="#fbfdff" stroke="#e4ebf3"/>
+                  <g stroke="#e6edf5" stroke-width="1">
+                    <line x1="100" y1="320" x2="820" y2="320"/>
+                    <line x1="100" y1="260" x2="820" y2="260"/>
+                    <line x1="100" y1="200" x2="820" y2="200"/>
+                    <line x1="100" y1="140" x2="820" y2="140"/>
+                    <line x1="100" y1="80" x2="820" y2="80"/>
+                  </g>
+                  <g fill="#66748a" font-size="12" font-family="inherit">
+                    <text x="34" y="324">0</text>
+                    <text x="24" y="264">50,000</text>
+                    <text x="18" y="204">100,000</text>
+                    <text x="18" y="144">150,000</text>
+                    <text x="18" y="84">200,000</text>
+                    <text x="834" y="324">0%</text>
+                    <text x="834" y="264">20%</text>
+                    <text x="834" y="204">40%</text>
+                    <text x="834" y="144">60%</text>
+                    <text x="834" y="84">80%</text>
+                  </g>
+                  <g fill="#c9d7ea">
+                    <rect x="132" y="170" width="66" height="150" rx="10"/>
+                    <rect x="248" y="150" width="66" height="170" rx="10"/>
+                    <rect x="364" y="128" width="66" height="192" rx="10"/>
+                    <rect x="480" y="136" width="66" height="184" rx="10"/>
+                    <rect x="596" y="106" width="66" height="214" rx="10"/>
+                    <rect x="712" y="98" width="66" height="222" rx="10"/>
+                  </g>
+                  <path d="M165 126 L281 120 L397 114 L513 110 L629 104 L745 100"
+                        fill="none" stroke="#4d84ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <g fill="#fff" stroke="#4d84ff" stroke-width="4">
+                    <circle cx="165" cy="126" r="6"/>
+                    <circle cx="281" cy="120" r="6"/>
+                    <circle cx="397" cy="114" r="6"/>
+                    <circle cx="513" cy="110" r="6"/>
+                    <circle cx="629" cy="104" r="6"/>
+                    <circle cx="745" cy="100" r="6"/>
+                  </g>
+                  <g fill="#415168" font-size="12" font-family="inherit">
+                    <text x="140" y="354">2025-12</text>
+                    <text x="256" y="354">2026-01</text>
+                    <text x="372" y="354">2026-02</text>
+                    <text x="488" y="354">2026-03</text>
+                    <text x="604" y="354">2026-04</text>
+                    <text x="720" y="354">2026-05</text>
+                  </g>
+                </svg>
+                <div class="chart-legend" aria-label="차트 범례">
+                  <span class="chart-legend-item">청구건수 <span style="width:12px;height:12px;border-radius:3px;background:#c9d7ea;display:inline-block;"></span></span>
+                  <span class="chart-legend-item">자동지급률 <span style="width:12px;height:12px;border-radius:3px;background:#4d84ff;display:inline-block;"></span></span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <aside class="callout">
+            <div class="callout-title">
+              <h3>성과 계산</h3>
+            </div>
+            <div class="mini-form" style="display:grid;gap:12px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;">
+                <div style="display:grid;gap:6px;">
+                  <label style="font-size:12px;color:var(--muted);font-weight:600;">청구년월</label>
+                  <div class="readonly-field" id="performance-month" style="height:42px;">-</div>
+                </div>
+                <div style="display:grid;gap:6px;">
+                  <label style="font-size:12px;color:var(--muted);font-weight:600;">적용단가(원)</label>
+                  <input class="search" id="performance-unit" style="min-width:0;" type="number" value="1200" min="0" step="1" inputmode="numeric" />
+                </div>
+              </div>
+              <button class="btn primary" id="performance-calc-btn" type="button">계산하기</button>
+              <div class="table-wrap" style="margin-top:0;">
+                <table>
+                  <tbody>
+                    <tr><td>청구건수</td><td id="performance-claim-count" style="text-align:right;font-weight:700;">182,400</td></tr>
+                    <tr><td>자동지급률</td><td id="performance-rate" style="text-align:right;font-weight:700;">58.4%</td></tr>
+                    <tr><td>성과</td><td id="performance-value" style="text-align:right;font-weight:700;">218,880,000원</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="subsection">
+              <article class="mini-card">
+                <div>
+                  <h4>접수채널별 비율</h4>
+                  <p>접수채널별 전체 청구건 중 자동지급 건이 차지하는 비율</p>
+                </div>
+                <div class="mini-list">
+                  <div class="mini-row">
+                    <span>대면</span>
+                    <div class="mini-track"><div class="mini-fill" style="width: 42%;"></div></div>
+                    <strong>42%</strong>
+                  </div>
+                  <div class="mini-row">
+                    <span>비대면</span>
+                    <div class="mini-track"><div class="mini-fill" style="width: 63%;"></div></div>
+                    <strong>63%</strong>
+                  </div>
+                  <div class="mini-row">
+                    <span>실손24</span>
+                    <div class="mini-track"><div class="mini-fill" style="width: 51%;"></div></div>
+                    <strong>51%</strong>
+                  </div>
+                </div>
+              </article>
+
+              <article class="mini-card">
+                <div>
+                  <h4>진료구분별 비율</h4>
+                  <p>자동지급 건 중 입원 / 통원 비율</p>
+                </div>
+                <div class="mini-pie-wrap">
+                  <svg class="mini-pie" viewBox="0 0 220 220" role="img" aria-label="진료구분별 비율 파이차트">
+                    <circle cx="110" cy="110" r="78" fill="#edf2f8"></circle>
+                    <path d="M110 110 L110 32 A78 78 0 1 1 45 153 Z" fill="#4d84ff"></path>
+                    <path d="M110 110 L45 153 A78 78 0 0 1 110 32 Z" fill="#1f9d67"></path>
+                    <circle cx="110" cy="110" r="44" fill="#ffffff"></circle>
+                    <text x="110" y="106" text-anchor="middle" font-size="18" font-weight="800" fill="#142033">72%</text>
+                    <text x="110" y="126" text-anchor="middle" font-size="12" fill="#66748a">통원</text>
+                  </svg>
+                  <div class="mini-list">
+                    <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+                      <span style="width:12px;height:12px;border-radius:50%;background:#4d84ff;display:inline-block;"></span>
+                      <span>통원</span>
+                      <strong>72%</strong>
+                    </div>
+                    <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+                      <span style="width:12px;height:12px;border-radius:50%;background:#1f9d67;display:inline-block;"></span>
+                      <span>입원</span>
+                      <strong>28%</strong>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel change-panel">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">변화 요약</h3>
+              <p class="panel-sub">전월 대비 변화와 segment 변경 내역을 표 형태로 보여줍니다.</p>
+            </div>
+          </div>
+          <div class="panel-body section-stack">
+            <section class="callout">
+              <div class="callout-title">
+                <h3>상태 요약</h3>
+              </div>
+              <ul class="callout-list">
+                <li class="callout-item"><span>자동지급률</span><span><span class="badge blue">증가 +0.7pp</span></span></li>
+                <li class="callout-item"><span>처리효율</span><span><span class="badge red">감소 -0.4pp</span></span></li>
+                <li class="callout-item"><span>자동지급 유형 상위 변화</span><span>A01 비중 확대</span></li>
+              </ul>
+            </section>
+
+            <section class="callout">
+              <div class="callout-title">
+                <h3>segment 변화</h3>
+              </div>
+              <div class="table-wrap segment-table" style="margin-top:0;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>변경 전 segment</th>
+                      <th>변경 후 segment</th>
+                      <th>건수</th>
+                      <th>비중</th>
+                      <th>변화 사유</th>
+                    </tr>
+                  </thead>
+                  <tbody id="segment-body">
+                    <tr>
+                      <td>S1. 소액 통원</td>
+                      <td>S2. 확정 통원</td>
+                      <td>248</td>
+                      <td>2.1%</td>
+                      <td>최근 3개월 진료패턴 안정화</td>
+                    </tr>
+                    <tr>
+                      <td>S3. 반복 입원</td>
+                      <td>S4. 제외 검토</td>
+                      <td>96</td>
+                      <td>0.8%</td>
+                      <td>필수 확인 항목 누락</td>
+                    </tr>
+                    <tr>
+                      <td>S2. 확정 통원</td>
+                      <td>S1. 소액 통원</td>
+                      <td>184</td>
+                      <td>1.6%</td>
+                      <td>청구금액 하향 및 단순화</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">자동지급 적용현황</h3>
+              <p class="panel-sub">자동지급유형, 대상건수, 전체 자동지급건수 대비 비율, 적용 여부를 함께 봅니다.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>자동지급 유형</th>
+                    <th>대상건수</th>
+                    <th>전체 자동지급건수 대비 비율</th>
+                    <th>적용여부</th>
+                  </tr>
+                </thead>
+                <tbody id="auto-type-body">
+                  <tr><td>A01 비대면 소액 통원</td><td>1,740</td><td>36.1%</td><td><span class="badge green">On</span></td></tr>
+                  <tr><td>A02 입원 제증명료 단순건</td><td>880</td><td>18.3%</td><td><span class="badge green">On</span></td></tr>
+                  <tr><td>A03 통원 급여전용건</td><td>620</td><td>12.8%</td><td><span class="badge green">On</span></td></tr>
+                  <tr><td>A04 실손24 소액건</td><td>540</td><td>11.2%</td><td><span class="badge blue">On</span></td></tr>
+                  <tr><td>A05 검증된 반복 통원</td><td>320</td><td>6.7%</td><td><span class="badge amber">Off</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="archive-view" class="view" hidden>
+        <section class="topbar">
+          <div class="archive-header">
+            <div>
+              <h2 class="page-title">리포트보관함</h2>
+              <div class="page-subtitle">확정된 월말 스냅샷으로 생성된 월간 리포트를 누적 보관하고, 재다운로드와 구독계정관리 기능을 제공합니다.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">리포트 목록</h3>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>기준월</th>
+                    <th>생성일</th>
+                    <th>발송일</th>
+                    <th>리포트 상태</th>
+                    <th>파일명</th>
+                  </tr>
+                </thead>
+                <tbody id="archive-report-body">
+                </tbody>
+              </table>
+            </div>
+
+            <div class="subsection">
+              <div class="panel" style="box-shadow:none;">
+                <div class="panel-header">
+                  <div>
+                    <h3 class="panel-title" style="font-size:14px;">구독계정</h3>
+                    <p class="panel-sub">리포트 구독 문의: 보험금 심사팀 송지윤 프로(02-3709-5650)</p>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>수신자</th>
+                          <th>이메일</th>
+                          <th>등록년월</th>
+                        </tr>
+                      </thead>
+                      <tbody id="subscription-body">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="archive-send-float" aria-label="발송테스트">
+          <div class="archive-send-float-title">발송테스트</div>
+          <div class="archive-send-controls">
+            <div class="topbar-action archive-control">
+              <label for="archive-month-filter">선택년월</label>
+              <select class="select" id="archive-month-filter"></select>
+            </div>
+            <button class="btn primary" id="archive-send-test-btn" type="button">발송테스트</button>
+          </div>
+          <div class="archive-status" id="archive-send-test-status" aria-live="polite">선택한 기준월의 리포트를 테스트 발송합니다.</div>
+        </aside>
+      </div>
+
+    </main>
+  </div>
+  <script>
+    const SUPABASE_URL = 'https://ejgruldmrfbtalplwowr.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD';
+    const REPORT_SEND_API_URL = 'http://127.0.0.1:8787/api/send-monthly-report';
+    const REPORT_FILE_INDEX_PATH = '../data/private/report_file_index.json';
+
+    const navItems = document.querySelectorAll('.nav-item[data-view]');
+    const views = {
+      dashboard: document.getElementById('dashboard-view'),
+      archive: document.getElementById('archive-view'),
+    };
+
+    const state = {
+      snapshots: [],
+      latestSnapshot: null,
+      previousSnapshot: null,
+      allClaims: [],
+      reportArchives: [],
+      reportFileIndex: [],
+      subscriptions: [],
+      performanceUnitCost: 1200,
+      archiveSendState: {
+        selectedMonth: '',
+        isSending: false,
+      },
+      filters: {
+        periodMonths: 6,
+        month: '',
+      },
+    };
+
+    const apiHeaders = {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    };
+
+    const controlEls = {
+      period: document.getElementById('period-filter'),
+      month: document.getElementById('month-filter'),
+      archiveMonth: document.getElementById('archive-month-filter'),
+      archiveSendButton: document.getElementById('archive-send-test-btn'),
+      archiveSendStatus: document.getElementById('archive-send-test-status'),
+      performanceMonth: document.getElementById('performance-month'),
+      performanceUnit: document.getElementById('performance-unit'),
+      performanceButton: document.getElementById('performance-calc-btn'),
+      performanceClaimCount: document.getElementById('performance-claim-count'),
+      performanceRate: document.getElementById('performance-rate'),
+      performanceValue: document.getElementById('performance-value'),
+    };
+
+    function pct(value, digits = 1) {
+      return `${Number(value).toFixed(digits)}%`;
+    }
+
+    function pp(value, digits = 1) {
+      const signed = Number(value) >= 0 ? `+${Number(value).toFixed(digits)}` : Number(value).toFixed(digits);
+      return `${signed}pp`;
+    }
+
+    function fmtInt(value) {
+      return Number(value).toLocaleString('ko-KR');
+    }
+
+    function maskEmail(email) {
+      if (!email) return '-';
+      if (email.includes('****')) return email;
+      const [localPart, domainPart] = String(email).split('@');
+      if (!domainPart) return email;
+      if (localPart.length <= 4) {
+        return `${localPart[0] ?? ''}${'*'.repeat(Math.max(localPart.length - 1, 1))}@${domainPart}`;
+      }
+      const prefix = localPart.slice(0, 4);
+      const suffix = localPart.slice(-2);
+      const maskLen = Math.max(localPart.length - 6, 4);
+      return `${prefix}${'*'.repeat(maskLen)}${suffix}@${domainPart}`;
+    }
+
+    function groupCount(rows, keyFn, predicate = () => true) {
+      const map = new Map();
+      rows.filter(predicate).forEach((row) => {
+        const key = keyFn(row) ?? '-';
+        map.set(key, (map.get(key) || 0) + 1);
+      });
+      return map;
+    }
+
+    function normalizeText(value) {
+      return String(value ?? '').toLowerCase().replace(/\s+/g, '');
+    }
+
+    function getSnapshotIndex(month) {
+      return state.snapshots.findIndex((row) => row.snapshot_month === month);
+    }
+
+    function getWindowSnapshots(endIndex, periodMonths) {
+      if (!state.snapshots.length) return [];
+      const safeIndex = Math.max(0, Math.min(endIndex, state.snapshots.length - 1));
+      return state.snapshots.slice(Math.max(0, safeIndex - periodMonths + 1), safeIndex + 1);
+    }
+
+    function getClaimsForMonth(month) {
+      return state.allClaims.filter((row) => row.claim_month === month);
+    }
+
+    function getPreviousMonth(month) {
+      const [year, mm] = String(month).split('-');
+      const y = Number(year);
+      const m = Number(mm);
+      if (!y || !m) return month;
+      if (m === 1) return `${y - 1}-12`;
+      return `${y}-${String(m - 1).padStart(2, '0')}`;
+    }
+
+    function toFileHref(filePath) {
+      if (!filePath) return '';
+      if (String(filePath).startsWith('file://')) return filePath;
+      return `file://${String(filePath).replace(/^file:\/\//, '')}`;
+    }
+
+    function getActiveSubscriptionCount() {
+      return state.subscriptions.filter((row) => String(row.active_flag || '').toUpperCase() === 'Y').length;
+    }
+
+    function upsertArchiveRow(row) {
+      const next = state.reportArchives.filter((item) => item.snapshot_month !== row.snapshot_month);
+      next.push(row);
+      next.sort((a, b) => String(b.snapshot_month).localeCompare(String(a.snapshot_month)));
+      state.reportArchives = next;
+    }
+
+    function getAvailableReportFiles(snapshotMonth) {
+      return state.reportFileIndex.filter((row) => row.snapshot_month === snapshotMonth);
+    }
+
+    function hasAvailableReportFile(snapshotMonth) {
+      return getAvailableReportFiles(snapshotMonth).length > 0;
+    }
+
+    function resolveLatestReportFileName(snapshotMonth, fallbackName = '') {
+      return getAvailableReportFiles(snapshotMonth)[0]?.file_name || fallbackName || `monthly_auto_payment_report_${snapshotMonth}.docx`;
+    }
+
+    function resolveLatestReportFilePath(snapshotMonth, fallbackPath = '') {
+      return getAvailableReportFiles(snapshotMonth)[0]?.file_path || fallbackPath || `../reports/${resolveLatestReportFileName(snapshotMonth)}`;
+    }
+
+    function syncArchiveMonthOptions() {
+      const select = controlEls.archiveMonth;
+      if (!select) return;
+      const fileIndexLoaded = state.reportFileIndex.length > 0;
+      const archiveMonths = state.reportArchives
+        .filter((row) => !fileIndexLoaded || hasAvailableReportFile(row.snapshot_month))
+        .map((row) => row.snapshot_month)
+        .filter(Boolean)
+        .sort()
+        .reverse();
+      const current = select.value || state.archiveSendState.selectedMonth || state.latestSnapshot?.snapshot_month || '';
+      select.innerHTML = archiveMonths.length
+        ? archiveMonths.map((month) => `<option value="${month}">${month}</option>`).join('')
+        : '<option value="">발송 가능한 리포트가 없습니다</option>';
+      const nextValue = archiveMonths.includes(current) ? current : (archiveMonths[0] || '');
+      select.value = nextValue;
+      state.archiveSendState.selectedMonth = nextValue;
+      updateArchiveSendControls();
+    }
+
+    function setArchiveSendStatus(message, tone = 'muted') {
+      if (!controlEls.archiveSendStatus) return;
+      controlEls.archiveSendStatus.textContent = message;
+      controlEls.archiveSendStatus.className = `archive-status ${tone === 'muted' ? '' : tone}`.trim();
+    }
+
+    function updateArchiveSendControls() {
+      const select = controlEls.archiveMonth;
+      const button = controlEls.archiveSendButton;
+      const selectedMonth = select?.value || state.archiveSendState.selectedMonth || '';
+      const hasFile = selectedMonth ? hasAvailableReportFile(selectedMonth) : false;
+      if (button) button.disabled = state.archiveSendState.isSending || !selectedMonth || !hasFile;
+    }
+
+    async function handleArchiveSendTest() {
+      const select = controlEls.archiveMonth;
+      const selectedMonth = select?.value || state.archiveSendState.selectedMonth || state.latestSnapshot?.snapshot_month || '';
+      if (!selectedMonth) {
+        setArchiveSendStatus('발송 가능한 기준월이 없습니다.', 'amber');
+        return;
+      }
+      if (!hasAvailableReportFile(selectedMonth)) {
+        setArchiveSendStatus(`${selectedMonth} 기준 리포트 파일이 없어 발송테스트를 실행할 수 없습니다.`, 'amber');
+        updateArchiveSendControls();
+        return;
+      }
+
+      state.archiveSendState.isSending = true;
+      if (controlEls.archiveSendButton) controlEls.archiveSendButton.textContent = '발송 중';
+      setArchiveSendStatus(`${selectedMonth} 발송테스트 진행 중...`, 'blue');
+      updateArchiveSendControls();
+
+      try {
+        const response = await fetch(REPORT_SEND_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ reportMonth: selectedMonth }),
+        });
+        const text = await response.text();
+        let payload = {};
+        try {
+          payload = text ? JSON.parse(text) : {};
+        } catch (_) {
+          payload = { raw: text };
+        }
+
+        if (!response.ok) {
+          throw new Error(payload?.error || payload?.message || text || `HTTP ${response.status}`);
+        }
+
+        const existingRow = state.reportArchives.find((row) => row.snapshot_month === selectedMonth);
+        const sentAt = payload.sent_at || new Date().toISOString();
+        const recipientCount = Number(payload.recipient_count ?? getActiveSubscriptionCount());
+        const fileName = payload.file_name || resolveLatestReportFileName(selectedMonth, existingRow?.file_name);
+        const nextRow = {
+          ...existingRow,
+          snapshot_month: selectedMonth,
+          comparison_month: payload.comparison_month || existingRow?.comparison_month || getPreviousMonth(selectedMonth),
+          report_title: payload.report_title || existingRow?.report_title || `월간 자동심사 현황 리포트 ${selectedMonth}`,
+          file_name: fileName,
+          file_path: payload.file_path || existingRow?.file_path || `../reports/${fileName}`,
+          checksum: payload.checksum || existingRow?.checksum || '',
+          generated_at: payload.generated_at || existingRow?.generated_at || sentAt,
+          sent_at: sentAt,
+          generated_flag: 'Y',
+          sent_flag: 'Y',
+          recipient_count: recipientCount,
+          report_status: '발송됨',
+          notes: payload.notes || `발송테스트로 ${recipientCount}명 수신자에게 반영`,
+          created_at: existingRow?.created_at || payload.generated_at || sentAt,
+          updated_at: sentAt,
+        };
+        upsertArchiveRow(nextRow);
+        renderArchive(state.reportArchives, state.subscriptions, {});
+        setArchiveSendStatus(`${selectedMonth} 발송테스트 완료 · ${recipientCount}명 대상`, 'green');
+      } finally {
+        state.archiveSendState.isSending = false;
+        if (controlEls.archiveSendButton) controlEls.archiveSendButton.textContent = '발송테스트';
+        updateArchiveSendControls();
+      }
+    }
+
+    const SUBSCRIPTION_CSV_PATH = '../data/private/report_subscription_accounts.csv';
+
+    function parseCsvLine(line) {
+      const cells = [];
+      let current = '';
+      let quoted = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const char = line[i];
+        const next = line[i + 1];
+        if (char === '"' && quoted && next === '"') {
+          current += '"';
+          i += 1;
+          continue;
+        }
+        if (char === '"') {
+          quoted = !quoted;
+          continue;
+        }
+        if (char === ',' && !quoted) {
+          cells.push(current);
+          current = '';
+          continue;
+        }
+        current += char;
+      }
+      cells.push(current);
+      return cells.map((cell) => cell.trim());
+    }
+
+    function parseCsv(text) {
+      const lines = String(text || '').trim().split(/\r?\n/).filter(Boolean);
+      if (!lines.length) return [];
+      const headers = parseCsvLine(lines[0]);
+      return lines.slice(1).map((line) => {
+        const values = parseCsvLine(line);
+        return headers.reduce((acc, header, index) => {
+          acc[header] = values[index] ?? '';
+          return acc;
+        }, {});
+      });
+    }
+
+    async function loadReportFileIndex() {
+      try {
+        const response = await fetch(REPORT_FILE_INDEX_PATH);
+        if (!response.ok) return [];
+        const payload = await response.json();
+        const rows = Array.isArray(payload) ? payload : (payload?.reports || payload?.files || []);
+        return rows
+          .filter((row) => row && row.snapshot_month && row.file_name && row.file_path)
+          .slice()
+          .sort((a, b) => {
+            const monthCompare = String(b.snapshot_month).localeCompare(String(a.snapshot_month));
+            if (monthCompare !== 0) return monthCompare;
+            return String(b.updated_at || b.mtime || '').localeCompare(String(a.updated_at || a.mtime || ''));
+          });
+      } catch (error) {
+        console.warn('Falling back to empty report file index', error);
+        return [];
+      }
+    }
+
+    async function loadSubscriptionAccounts() {
+      try {
+        const response = await fetch(SUBSCRIPTION_CSV_PATH);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        return parseCsv(text);
+      } catch (error) {
+        console.warn('Falling back to embedded subscription data', error);
+        return [
+          {
+            recipient_name: '운영관리자',
+            recipient_email: 'ssongjiuoon@naver.com',
+            department: '운영기획',
+            active_flag: 'Y',
+            created_at: '2026-06-01T09:00:00Z',
+            updated_at: '2026-06-01T09:00:00Z',
+          },
+        ];
+      }
+    }
+
+    function getSelectedContext() {
+      const selectedMonth = state.filters.month || state.latestSnapshot?.snapshot_month;
+      const selectedIndex = Math.max(0, getSnapshotIndex(selectedMonth));
+      const selectedSnapshot = state.snapshots[selectedIndex] || state.latestSnapshot;
+      const previousSnapshot = state.snapshots[selectedIndex - 1] || selectedSnapshot;
+      const currentClaims = getClaimsForMonth(selectedSnapshot?.claim_month || selectedSnapshot?.snapshot_month || selectedMonth) || [];
+      const previousClaims = getClaimsForMonth(getPreviousMonth(selectedSnapshot?.claim_month || selectedSnapshot?.snapshot_month || selectedMonth)) || [];
+      return {
+        selectedMonth: selectedSnapshot?.snapshot_month || selectedMonth,
+        selectedIndex,
+        selectedSnapshot,
+        previousSnapshot,
+        currentClaims,
+        previousClaims,
+        windowSnapshots: getWindowSnapshots(selectedIndex, state.filters.periodMonths),
+      };
+    }
+
+    function syncMonthOptions() {
+      if (!controlEls.month) return;
+      const current = state.filters.month || controlEls.month.value;
+      controlEls.month.innerHTML = state.snapshots
+        .slice()
+        .reverse()
+        .map((row) => `<option value="${row.snapshot_month}">${row.snapshot_month}</option>`)
+        .join('');
+      controlEls.month.value = state.snapshots.some((row) => row.snapshot_month === current)
+        ? current
+        : (state.snapshots.at(-1)?.snapshot_month || current);
+      state.filters.month = controlEls.month.value;
+    }
+
+    async function supaFetch(path, query = '') {
+      const response = await fetch(`${SUPABASE_URL}${path}${query}`, { headers: apiHeaders });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Supabase request failed (${response.status}): ${text}`);
+      }
+      return response.json();
+    }
+
+    async function supaFetchAllPages(path, query = '', pageSize = 1000) {
+      const rows = [];
+      let start = 0;
+      while (true) {
+        const response = await fetch(`${SUPABASE_URL}${path}${query}`, {
+          headers: {
+            ...apiHeaders,
+            'Range-Unit': 'items',
+            Range: `${start}-${start + pageSize - 1}`,
+          },
+        });
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Supabase request failed (${response.status}): ${text}`);
+        }
+        const page = await response.json();
+        rows.push(...page);
+        if (!Array.isArray(page) || page.length < pageSize) break;
+        start += pageSize;
+        if (start > 100000) break;
+      }
+      return rows;
+    }
+
+    function showError(message) {
+      const footer = document.querySelector('.footer-note');
+      if (footer) footer.textContent = message;
+      else console.error(message);
+    }
+
+    function updateText(selector, value) {
+      const el = document.querySelector(selector);
+      if (el) el.textContent = value;
+    }
+
+    function updateKpi(index, value, desc, badgeText, badgeClass) {
+      const cards = document.querySelectorAll('.kpi');
+      const card = cards[index];
+      if (!card) return;
+      const valueEl = card.querySelector('.kpi-value');
+      const descEl = card.querySelector('.kpi-desc');
+      const badgeEl = card.querySelector('.badge');
+      if (valueEl) valueEl.textContent = value;
+      if (descEl) descEl.innerHTML = desc;
+      if (badgeEl) {
+        badgeEl.textContent = badgeText;
+        badgeEl.className = `badge ${badgeClass}`;
+      }
+    }
+
+    function renderPerformanceCalc(snapshot) {
+      if (!snapshot) return;
+      if (controlEls.performanceMonth) {
+        controlEls.performanceMonth.textContent = snapshot.snapshot_month;
+      }
+      if (controlEls.performanceUnit) {
+        controlEls.performanceUnit.value = String(state.performanceUnitCost ?? 1200);
+      }
+      const claimCount = Number(snapshot.total_claim_count ?? 0);
+      const autoRate = Number(snapshot.auto_payment_rate ?? 0);
+      const unitCost = Number(state.performanceUnitCost ?? 1200);
+      const performance = claimCount * unitCost;
+      if (controlEls.performanceClaimCount) {
+        controlEls.performanceClaimCount.textContent = fmtInt(claimCount);
+      }
+      if (controlEls.performanceRate) {
+        controlEls.performanceRate.textContent = pct(autoRate, 1);
+      }
+      if (controlEls.performanceValue) {
+        controlEls.performanceValue.textContent = `${fmtInt(performance)}원`;
+      }
+    }
+
+    function renderTrendChart(snapshots) {
+      const chartShell = document.querySelector('.chart-shell');
+      if (!chartShell || !snapshots.length) return;
+      const series = snapshots.slice();
+      const counts = series.map((row) => Number(row.total_claim_count));
+      const rates = series.map((row) => Number(row.auto_payment_rate));
+      const maxCount = Math.max(2000, Math.ceil(Math.max(...counts) / 500) * 500);
+      const maxRate = Math.max(70, Math.ceil(Math.max(...rates) / 10) * 10);
+      const chartWidth = 840;
+      const chartHeight = 380;
+      const leftPad = 100;
+      const rightPad = 72;
+      const topPad = 28;
+      const bottomPad = 56;
+      const plotWidth = chartWidth - leftPad - rightPad;
+      const plotHeight = chartHeight - topPad - bottomPad;
+      const chartBaseY = topPad + plotHeight;
+      const gap = plotWidth / series.length;
+      const barWidth = Math.min(66, Math.max(28, gap * 0.58));
+      const xForIndex = (index) => leftPad + gap * index + (gap - barWidth) / 2;
+      const yForCount = (count) => chartBaseY - (count / maxCount) * plotHeight;
+      const yForRate = (rate) => chartBaseY - (rate / maxRate) * plotHeight;
+      const linePoints = series
+        .map((row, index) => `${xForIndex(index) + barWidth / 2},${yForRate(Number(row.auto_payment_rate))}`)
+        .join(' ');
+      const countTicks = [0, 500, 1000, 1500, 2000];
+      const rateTicks = [0, 20, 40, 60, 80];
+
+      chartShell.innerHTML = `
+        <div class="chart-topline">
+          <span>좌측 축: 청구건수</span>
+          <span>우측 축: 자동지급률</span>
+        </div>
+        <svg viewBox="0 0 ${chartWidth} ${chartHeight}" width="100%" height="${chartHeight}" role="img" aria-label="청구건수와 자동지급률 듀얼축 차트">
+          <rect x="0" y="0" width="${chartWidth}" height="${chartHeight}" rx="18" fill="#fbfdff" stroke="#e4ebf3"/>
+          ${countTicks.map((tick) => {
+            const y = chartBaseY - (tick / maxCount) * plotHeight;
+            return `<line x1="${leftPad}" y1="${y}" x2="${chartWidth - rightPad}" y2="${y}" stroke="#e6edf5" stroke-width="1"/>`;
+          }).join('')}
+          <g fill="#66748a" font-size="12" font-family="inherit">
+            ${countTicks.map((tick) => {
+              const y = chartBaseY - (tick / maxCount) * plotHeight + 4;
+              return `<text x="14" y="${y}">${fmtInt(tick)}</text>`;
+            }).join('')}
+            ${rateTicks.map((tick) => {
+              const y = chartBaseY - (tick / maxRate) * plotHeight + 4;
+              return `<text x="${chartWidth - 12}" y="${y}" text-anchor="end">${tick}%</text>`;
+            }).join('')}
+          </g>
+          ${series.map((row, index) => {
+            const x = xForIndex(index);
+            const countY = yForCount(Number(row.total_claim_count));
+            const barHeight = chartBaseY - countY;
+            return `<rect x="${x}" y="${countY}" width="${barWidth}" height="${barHeight}" rx="10" fill="#c9d7ea"/>`;
+          }).join('')}
+          <polyline points="${linePoints}" fill="none" stroke="#4d84ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          ${series.map((row, index) => {
+            const cx = xForIndex(index) + barWidth / 2;
+            const cy = yForRate(Number(row.auto_payment_rate));
+            return `<g fill="#fff" stroke="#4d84ff" stroke-width="4"><circle cx="${cx}" cy="${cy}" r="6"/></g>`;
+          }).join('')}
+          <g fill="#415168" font-size="12" font-family="inherit">
+            ${series.map((row, index) => {
+              const x = xForIndex(index) + 2;
+              return `<text x="${x}" y="${chartHeight - 14}">${series.length > 8 && index % 2 === 1 ? '' : row.snapshot_month}</text>`;
+            }).join('')}
+          </g>
+        </svg>
+        <div class="chart-legend" aria-label="차트 범례">
+          <span class="chart-legend-item">청구건수 <span style="width:12px;height:12px;border-radius:3px;background:#c9d7ea;display:inline-block;"></span></span>
+          <span class="chart-legend-item">자동지급률 <span style="width:12px;height:12px;border-radius:3px;background:#4d84ff;display:inline-block;"></span></span>
+        </div>
+      `;
+    }
+
+    function renderChannelCard(claimRows) {
+      const card = document.querySelectorAll('.mini-card')[0];
+      if (!card) return;
+      const rows = Array.isArray(claimRows) ? claimRows : [];
+      const totalByChannel = groupCount(rows, (row) => row.receipt_channel);
+      const autoByChannel = groupCount(rows, (row) => row.receipt_channel, (row) => row.auto_payment_decision === 'AUTO_PAY');
+      const order = ['대면', '비대면', '실손24'];
+      const channelRows = order.map((channel) => {
+        const total = totalByChannel.get(channel) || 0;
+        const auto = autoByChannel.get(channel) || 0;
+        const rate = total ? Math.round((auto / total) * 100) : 0;
+        return { channel, rate };
+      });
+      card.querySelector('.mini-list').innerHTML = channelRows.map(({ channel, rate }) => `
+        <div class="mini-row">
+          <span>${channel}</span>
+          <div class="mini-track"><div class="mini-fill" style="width: ${rate}%;"></div></div>
+          <strong>${rate}%</strong>
+        </div>
+      `).join('');
+    }
+
+    function renderTreatmentCard(claimRows) {
+      const card = document.querySelectorAll('.mini-card')[1];
+      if (!card) return;
+      const rows = Array.isArray(claimRows) ? claimRows : [];
+      const autoRows = rows.filter((row) => row.auto_payment_decision === 'AUTO_PAY');
+      const counts = groupCount(autoRows, (row) => row.treatment_type);
+      const inpatient = counts.get('입원') || 0;
+      const outpatient = counts.get('통원') || 0;
+      const total = Math.max(1, inpatient + outpatient);
+      const inpatientPct = Math.round((inpatient / total) * 100);
+      const outpatientPct = 100 - inpatientPct;
+      const sweep = outpatientPct / 100 * 360;
+      const radians = (deg) => (deg - 90) * Math.PI / 180;
+      const arcPoint = (cx, cy, r, deg) => ({
+        x: cx + r * Math.cos(radians(deg)),
+        y: cy + r * Math.sin(radians(deg)),
+      });
+      const describeArc = (cx, cy, r, startDeg, endDeg) => {
+        const start = arcPoint(cx, cy, r, endDeg);
+        const end = arcPoint(cx, cy, r, startDeg);
+        const largeArc = endDeg - startDeg <= 180 ? 0 : 1;
+        return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y} Z`;
+      };
+      const svg = `
+        <svg class="mini-pie" viewBox="0 0 220 220" role="img" aria-label="진료구분별 비율 파이차트">
+          <circle cx="110" cy="110" r="78" fill="#edf2f8"></circle>
+          <path d="${describeArc(110, 110, 78, 0, sweep)}" fill="#4d84ff"></path>
+          <path d="${describeArc(110, 110, 78, sweep, 360)}" fill="#1f9d67"></path>
+          <circle cx="110" cy="110" r="44" fill="#ffffff"></circle>
+          <text x="110" y="106" text-anchor="middle" font-size="18" font-weight="800" fill="#142033">${outpatientPct}%</text>
+          <text x="110" y="126" text-anchor="middle" font-size="12" fill="#66748a">통원</text>
+        </svg>
+      `;
+      card.querySelector('.mini-pie-wrap').innerHTML = `${svg}
+        <div class="mini-list">
+          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#4d84ff;display:inline-block;"></span>
+            <span>통원</span>
+            <strong>${outpatientPct}%</strong>
+          </div>
+          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#1f9d67;display:inline-block;"></span>
+            <span>입원</span>
+            <strong>${inpatientPct}%</strong>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderChangeSummary(latest, previous, claimRows) {
+      const rows = Array.isArray(claimRows) ? claimRows : [];
+      const badges = document.querySelectorAll('.change-panel .callout .badge');
+      if (badges[0]) {
+        badges[0].textContent = latest.status_label;
+        badges[0].className = `badge ${latest.status_label === '안정' ? 'green' : latest.status_label === '변화' ? 'blue' : 'amber'}`;
+      }
+
+      const stateItems = document.querySelectorAll('.change-panel .callout-list .callout-item');
+      if (stateItems[0]) {
+        const delta = Number(latest.auto_payment_rate_change ?? 0);
+        const badgeClass = delta >= 0 ? 'blue' : 'red';
+        stateItems[0].querySelector('span:last-child').innerHTML = `<span class="badge ${badgeClass}">${delta >= 0 ? '증가 ' : '감소 '}${pp(delta)}</span>`;
+      }
+      if (stateItems[1]) {
+        const delta = Number(latest.processing_efficiency_change ?? 0);
+        const badgeClass = delta >= 0 ? 'green' : 'red';
+        stateItems[1].querySelector('span:last-child').innerHTML = `<span class="badge ${badgeClass}">${delta >= 0 ? '증가 ' : '감소 '}${pp(delta)}</span>`;
+      }
+      if (stateItems[2]) {
+        const topTypeCounts = groupCount(rows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const topType = [...topTypeCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+        stateItems[2].querySelector('span:last-child').textContent = topType ? `${topType[0]} 비중 확대` : '분석 중';
+      }
+
+      const segRows = document.querySelectorAll('#segment-body tr');
+      const changes = groupCount(
+        rows,
+        (row) => `${row.segment_before}→${row.segment_after}｜${row.segment_change_reason}`,
+        (row) => row.segment_change_flag === 'Y'
+      );
+      const sortedChanges = [...changes.entries()].sort((a, b) => b[1] - a[1]).slice(0, segRows.length);
+      if (!sortedChanges.length) {
+        const body = document.getElementById('segment-body');
+        if (body) body.innerHTML = `<tr><td colspan="5" class="empty-row">segment 변화가 없는 월입니다.</td></tr>`;
+        return;
+      }
+      sortedChanges.forEach(([key, count], index) => {
+        const [beforeAfter, reason] = key.split('｜');
+        const [beforeSeg, afterSeg] = beforeAfter.split('→');
+        const row = segRows[index];
+        if (!row) return;
+        const cells = row.querySelectorAll('td');
+        if (cells[0]) cells[0].textContent = beforeSeg;
+        if (cells[1]) cells[1].textContent = afterSeg;
+        if (cells[2]) cells[2].textContent = fmtInt(count);
+        if (cells[3]) cells[3].textContent = pct((count / rows.length) * 100, 1);
+        if (cells[4]) cells[4].textContent = reason;
+      });
+    }
+
+    function renderAutoPaymentTable(claimRows) {
+      const tbody = document.getElementById('auto-type-body');
+      if (!tbody) return;
+      const rows = Array.isArray(claimRows) ? claimRows : [];
+      const autoRows = rows.filter((row) => row.auto_payment_decision === 'AUTO_PAY');
+      const counts = groupCount(autoRows, (row) => row.auto_payment_type_code);
+      const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const total = autoRows.length || 1;
+      if (!sorted.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-row">자동지급 유형 데이터가 없습니다.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = sorted.map(([code, count], index) => {
+        const labels = {
+          A01: 'A01 비대면 소액 통원',
+          A02: 'A02 입원 제증명료 단순건',
+          A03: 'A03 통원 급여전용건',
+          A04: 'A04 실손24 소액건',
+          A05: 'A05 검증된 반복 통원',
+          A06: 'A06 단순 반복 청구',
+          A07: 'A07 경증 비급여 단순건',
+          A08: 'A08 자동확정 가능건',
+        };
+        const badgeClass = index < 3 ? 'green' : index < 4 ? 'blue' : 'amber';
+        return `<tr><td>${labels[code] ?? code}</td><td>${fmtInt(count)}</td><td>${pct((count / total) * 100, 1)}</td><td><span class="badge ${badgeClass}">On</span></td></tr>`;
+      }).join('');
+    }
+
+    function renderArchive(archives, subscriptions, options = {}) {
+      const query = normalizeText(options.query ?? '');
+      const status = options.status ?? '전체';
+      const previewOnly = Boolean(options.previewOnly);
+      const fileIndexLoaded = state.reportFileIndex.length > 0;
+      const filteredArchives = archives.filter((row) => {
+        const matchesStatus = status === '전체' || String(row.report_status || '').trim() === status;
+        const haystack = normalizeText([
+          row.snapshot_month,
+          row.report_title,
+          row.file_name,
+          row.report_status,
+          row.notes,
+        ].join(' '));
+        const matchesQuery = !query || haystack.includes(query);
+        const hasFile = !fileIndexLoaded || hasAvailableReportFile(row.snapshot_month);
+        return matchesStatus && matchesQuery && hasFile;
+      });
+      const filteredSubscriptions = subscriptions.filter((row) => {
+        const haystack = normalizeText([
+          row.recipient_name,
+          row.recipient_email,
+          row.department,
+          row.active_flag,
+        ].join(' '));
+        return !query || haystack.includes(query);
+      });
+
+      if (previewOnly) {
+        return { reportCount: filteredArchives.length, subscriptionCount: filteredSubscriptions.length };
+      }
+
+      const archiveRows = document.getElementById('archive-report-body');
+      if (archiveRows) {
+        const sorted = filteredArchives.slice().sort((a, b) => String(b.snapshot_month).localeCompare(String(a.snapshot_month)));
+        if (!sorted.length) {
+          archiveRows.innerHTML = `<tr><td colspan="5" class="empty-row">조건에 맞는 리포트가 없습니다.</td></tr>`;
+        } else {
+          archiveRows.innerHTML = sorted.map((row) => {
+            const statusLabel = row.report_status || (row.sent_flag === 'Y' ? '발송됨' : row.generated_flag === 'Y' ? '생성됨' : '미발송');
+            const badgeClass = statusLabel === '발송됨' ? 'green' : statusLabel === '생성됨' ? 'blue' : 'amber';
+            const fileName = resolveLatestReportFileName(row.snapshot_month, row.file_name);
+            const filePath = resolveLatestReportFilePath(row.snapshot_month, row.file_path);
+            const fileUrl = toFileHref(filePath) || new URL(`../reports/${fileName}`, window.location.href).href;
+            return `
+              <tr>
+                <td>${row.snapshot_month}</td>
+                <td>${row.generated_at?.slice(0, 10) ?? row.snapshot_date ?? '-'}</td>
+                <td>${row.sent_at?.slice(0, 10) ?? '-'}</td>
+                <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
+                <td><a class="file-link" href="${fileUrl}" download="${fileName}">${fileName}</a></td>
+              </tr>`;
+          }).join('');
+        }
+      }
+
+      const subscriptionRows = document.getElementById('subscription-body');
+      if (subscriptionRows) {
+        const sortedAccounts = filteredSubscriptions.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+        if (!sortedAccounts.length) {
+          subscriptionRows.innerHTML = `<tr><td colspan="3" class="empty-row">조건에 맞는 구독계정이 없습니다.</td></tr>`;
+        } else {
+        subscriptionRows.innerHTML = sortedAccounts.map((row) => {
+          return `
+            <tr>
+              <td>${row.recipient_name}</td>
+              <td>${maskEmail(row.recipient_email)}</td>
+              <td>${row.created_at?.slice(0, 7) ?? '-'}</td>
+            </tr>`;
+        }).join('');
+        }
+      }
+    }
+
+    function renderDashboard() {
+      if (!state.snapshots.length) return;
+      const ctx = getSelectedContext();
+      const latest = ctx.selectedSnapshot;
+      const prev = ctx.previousSnapshot;
+
+      updateText('.sidebar-card-value', `${latest.snapshot_month} 확정`);
+
+      updateKpi(0, pct(latest.auto_payment_rate, 1), `전월 대비 <strong style="color: ${Number(latest.auto_payment_rate_change) >= 0 ? 'var(--blue)' : 'var(--red)'};">${pp(latest.auto_payment_rate_change, 1)}</strong>`, null, null);
+      updateKpi(1, fmtInt(latest.auto_payment_count), '월말 스냅샷 기준 집계', null, null);
+      updateKpi(2, fmtInt(latest.exclusion_count + latest.manual_review_count), '인심사 및 제외 유형 포함', null, null);
+      updateKpi(3, pct(latest.processing_efficiency, 1), `전월 대비 <strong style="color: ${Number(latest.processing_efficiency_change) >= 0 ? 'var(--green)' : 'var(--red)'};">${pp(latest.processing_efficiency_change, 1)}</strong>`, null, null);
+      updateKpi(4, latest.status_label, '기준월 이전 6개월 표준편차 기반 판정', latest.status_label === '안정' ? 'Stable' : latest.status_label, latest.status_label === '안정' ? 'green' : latest.status_label === '변화' ? 'blue' : 'amber');
+
+      const safeRender = (fn, label) => {
+        try {
+          fn();
+        } catch (error) {
+          console.error(`render failed: ${label}`, error);
+        }
+      };
+
+      safeRender(() => renderPerformanceCalc(latest), 'performance');
+      safeRender(() => renderTrendChart(ctx.windowSnapshots), 'trend');
+      safeRender(() => renderChannelCard(ctx.currentClaims), 'channel');
+      safeRender(() => renderTreatmentCard(ctx.currentClaims), 'treatment');
+      safeRender(() => renderChangeSummary(latest, prev, ctx.currentClaims), 'change-summary');
+      safeRender(() => renderAutoPaymentTable(ctx.currentClaims), 'auto-type-table');
+      renderArchive(state.reportArchives, state.subscriptions, {});
+    }
+
+    function bindControls() {
+      if (controlEls.period) {
+        controlEls.period.value = String(state.filters.periodMonths);
+        controlEls.period.addEventListener('change', () => {
+          state.filters.periodMonths = Number(controlEls.period.value) || 6;
+          renderDashboard();
+        });
+      }
+
+      if (controlEls.month) {
+        controlEls.month.addEventListener('change', () => {
+          state.filters.month = controlEls.month.value;
+          renderDashboard();
+        });
+      }
+
+      if (controlEls.performanceUnit) {
+        controlEls.performanceUnit.addEventListener('input', () => {
+          const parsed = Number(controlEls.performanceUnit.value);
+          state.performanceUnitCost = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+        });
+      }
+
+      if (controlEls.performanceButton) {
+        controlEls.performanceButton.addEventListener('click', () => {
+          const parsed = Number(controlEls.performanceUnit?.value);
+          state.performanceUnitCost = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+          const ctx = getSelectedContext();
+          renderPerformanceCalc(ctx.selectedSnapshot);
+        });
+      }
+
+      if (controlEls.archiveMonth) {
+        controlEls.archiveMonth.addEventListener('change', () => {
+          state.archiveSendState.selectedMonth = controlEls.archiveMonth.value;
+          updateArchiveSendControls();
+        });
+      }
+
+      if (controlEls.archiveSendButton) {
+        controlEls.archiveSendButton.addEventListener('click', () => {
+          handleArchiveSendTest().catch((error) => {
+            console.error(error);
+            setArchiveSendStatus(`발송테스트 실패: ${error.message}`, 'red');
+            state.archiveSendState.isSending = false;
+            updateArchiveSendControls();
+          });
+        });
+      }
+    }
+
+    function showView(viewName) {
+      Object.entries(views).forEach(([name, el]) => {
+        if (!el) return;
+        el.hidden = name !== viewName;
+      });
+
+      navItems.forEach((item) => {
+        item.classList.toggle('active', item.dataset.view === viewName);
+      });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => showView(item.dataset.view));
+    });
+
+    async function loadDashboardData() {
+      const [snapshots, latestClaims, reportArchives, reportFileIndex] = await Promise.all([
+        supaFetch('/rest/v1/monthly_auto_payment_snapshot_fact', '?select=*&order=snapshot_month.asc'),
+        supaFetchAllPages(
+          '/rest/v1/claim_payment_fact',
+          '?select=claim_month,receipt_channel,treatment_type,auto_payment_decision,auto_payment_type_code,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
+        ),
+        supaFetch('/rest/v1/report_archive_fact', '?select=*&order=snapshot_month.desc'),
+        loadReportFileIndex(),
+      ]);
+
+      state.snapshots = snapshots;
+      state.latestSnapshot = snapshots[snapshots.length - 1];
+      state.previousSnapshot = snapshots[snapshots.length - 2] || snapshots[snapshots.length - 1];
+      state.allClaims = latestClaims;
+      state.reportArchives = reportArchives;
+      state.reportFileIndex = reportFileIndex;
+      state.subscriptions = await loadSubscriptionAccounts();
+      state.filters.month = state.latestSnapshot?.snapshot_month || state.filters.month;
+      state.performanceUnitCost = 1200;
+      syncMonthOptions();
+      syncArchiveMonthOptions();
+      if (controlEls.period) controlEls.period.value = String(state.filters.periodMonths);
+      if (controlEls.performanceUnit) controlEls.performanceUnit.value = String(state.performanceUnitCost);
+      bindControls();
+      renderDashboard();
+      showView('dashboard');
+    }
+
+    loadDashboardData().catch((error) => {
+      console.error(error);
+      showError(`DB 연결 실패: ${error.message}`);
+    });
+  </script>
+</body>
+</html>

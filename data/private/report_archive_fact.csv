@@ -1,0 +1,2 @@
+report_archive_id,snapshot_month,comparison_month,report_title,file_name,file_path,checksum,generated_at,sent_at,generated_flag,sent_flag,recipient_count,report_status,notes,created_at,updated_at
+1,2025-12,2025-11,월간 자동심사 현황 리포트 2025-12,monthly_auto_payment_report_2025-12.docx,/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12.docx,7415fd422f75608ee631fa768a9ba377cbdc2e1dfad832dd1d99dd1e10d6da6d,2026-06-17T04:47:25Z,2026-06-17T04:47:20Z,Y,Y,1,발송됨,sent via gmail smtp,2026-06-16T11:16:49Z,2026-06-17T04:47:25Z

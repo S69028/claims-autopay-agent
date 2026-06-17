@@ -1,0 +1,17 @@
+﻿column_name,data_type,pk_flag,required_flag,null_allowed,default_value,description,recommended_addition
+rule_def_id,BIGINT,Y,Y,N,,정의 레코드 식별자,surrogate key
+type_code,VARCHAR(10),N,Y,N,,유형 코드,business key
+type_group,VARCHAR(20),N,Y,N,자동지급,유형 구분,자동지급/제외(인심사)
+type_name,VARCHAR(100),N,Y,N,,유형명,사용자 표시명
+natural_language_condition,TEXT,N,Y,N,,자연어 판정조건,설명문구 생성용
+rule_expression,TEXT,N,Y,N,,실행 가능한 판정식,SQL/DSL 중 하나로 고정
+reason_text,TEXT,N,Y,N,,판정 근거,보고서 설명용
+priority_order,INT,N,Y,N,0,평가 우선순위,중복 매칭 시 사용
+reference_columns,TEXT,N,Y,N,,참고 컬럼 목록,콤마 구분
+active_flag,CHAR(1),N,Y,N,Y,활성 여부,Y/N
+effective_from,DATE,N,Y,N,,적용 시작일,버전 관리용
+effective_to,DATE,N,N,Y,,적용 종료일,활성 버전은 공란 가능
+version_no,INT,N,Y,N,1,버전 번호,유형별 누적 버전
+explanation_template,TEXT,N,Y,N,,설명문구 템플릿,대시보드 문구용
+created_at,TIMESTAMP,N,Y,N,,생성 시각,
+updated_at,TIMESTAMP,N,Y,N,,수정 시각,

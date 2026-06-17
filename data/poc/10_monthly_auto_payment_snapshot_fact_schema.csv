@@ -1,0 +1,23 @@
+﻿column_name,data_type,pk_flag,required_flag,null_allowed,default_value,description,recommended_addition
+snapshot_month,CHAR(7),Y,Y,N,,월말 기준 연월,집계 키
+snapshot_date,DATE,N,Y,N,,스냅샷 기준일,
+data_frozen_flag,CHAR(1),N,Y,N,Y,데이터 확정 여부,미확정 상태 표현
+total_claim_count,INT,N,Y,N,0,총 청구 건수,
+auto_payment_candidate_count,INT,N,Y,N,0,자동지급 후보 건수,
+auto_payment_count,INT,N,Y,N,0,자동지급 건수,
+exclusion_count,INT,N,Y,N,0,제외/인심사 건수,
+manual_review_count,INT,N,Y,N,0,수동심사 건수,
+prev_month_auto_payment_rate,"DECIMAL(5,2)",N,N,Y,,전월 자동지급률,
+auto_payment_rate_change,"DECIMAL(5,2)",N,N,Y,,전월 대비 자동지급률 증감,
+processing_efficiency,"DECIMAL(5,2)",N,Y,N,0,처리효율,
+prev_month_processing_efficiency,"DECIMAL(5,2)",N,N,Y,,전월 처리효율,
+processing_efficiency_change,"DECIMAL(5,2)",N,N,Y,,전월 대비 처리효율 증감,
+stable_flag,CHAR(1),N,Y,N,N,안정 여부,
+status_label,VARCHAR(20),N,Y,N,,상태 라벨,안정/변화/미확정
+segment_change_summary,TEXT,N,N,Y,,segment 변화 요약,
+report_generated_flag,CHAR(1),N,Y,N,N,리포트 생성 여부,
+report_sent_flag,CHAR(1),N,Y,N,N,리포트 발송 여부,
+report_archive_id,VARCHAR(50),N,N,Y,,리포트 보관 ID,
+generated_at,TIMESTAMP,N,Y,N,,생성 시각,
+updated_at,TIMESTAMP,N,Y,N,,수정 시각,
+auto_payment_rate,"DECIMAL(5,2)",N,Y,N,0,자동지급률,

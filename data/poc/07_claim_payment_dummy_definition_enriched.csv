@@ -1,0 +1,49 @@
+﻿category,field_name,data_type,required,null_allowed,description,source_or_derived,recommended_addition,poc_use
+식별자,claim_id,VARCHAR(20),Y,N,청구 건 고유 식별자,기존 PK,claim fact PK,필수
+식별자,receipt_no,VARCHAR(20),Y,N,접수번호,기존,,필수
+식별자,customer_id,VARCHAR(20),Y,N,고객 식별자,기존,,필수
+식별자,contract_no,VARCHAR(30),Y,N,보험 계약 식별자,기존,,필수
+접수정보,claim_month,CHAR(7),Y,N,청구 기준 연월,파생,대시보드/리포트 집계 키,필수
+접수정보,snapshot_month,CHAR(7),Y,N,월말 스냅샷 기준 연월,신규,월말 비교 기준,필수
+접수정보,snapshot_date,DATE,Y,N,월말 스냅샷 날짜,신규,,필수
+접수정보,receipt_date,DATE,Y,N,청구 접수일,기존,,필수
+접수정보,receipt_channel,VARCHAR(20),Y,N,접수경로,기존,,필수
+진료정보,treatment_type,VARCHAR(10),Y,N,진료구분,기존,,필수
+진료정보,hospital_name,VARCHAR(100),Y,N,병원명,기존,,필수
+진료정보,hospital_code,VARCHAR(20),Y,N,병원 코드,기존,,선택
+진료정보,hospital_type,VARCHAR(20),Y,N,병원급,기존,,필수
+진료정보,diagnosis_code_primary,VARCHAR(20),Y,N,대표 진단코드,기존,,필수
+진료정보,diagnosis_code_secondary,VARCHAR(100),N,Y,부상병/보조 진단코드,신규,복수코드 가능,선택
+금액,benefit_covered_sum,"NUMERIC(14,0)",Y,N,급여 합계,기존,,필수
+금액,benefit_noncovered_sum,"NUMERIC(14,0)",Y,N,비급여 합계,기존,,필수
+금액,benefit_noncovered_certification_amount,"NUMERIC(14,0)",Y,N,비급여 제증명료,신규,A02 판정용,필수
+금액,benefit_noncovered_injection_amount,"NUMERIC(14,0)",Y,N,비급여 주사료,신규,E02 판정용,필수
+금액,total_medical_amount,"NUMERIC(14,0)",Y,N,총발생의료비,파생,룰 조건 핵심,필수
+금액,noncovered_ratio,"DECIMAL(5,2)",Y,N,비급여 비중,파생,A08/E07 판정용,필수
+금액,deducted_amount,"NUMERIC(14,0)",Y,N,삭감금액,기존,,필수
+금액,paid_amount,"NUMERIC(14,0)",Y,N,총지급금액,기존,,필수
+판정입력,burden_exclusion_flag,CHAR(1),Y,N,부담보여부,신규,E01 판정용,필수
+판정입력,other_insurance_flag,CHAR(1),Y,N,타사실손계약여부,신규,E04 판정용,필수
+판정입력,field_investigation_flag,CHAR(1),Y,N,현장조사이력여부,신규,E05 판정용,필수
+판정입력,contract_status,VARCHAR(20),Y,N,계약상태,기존,E06/E13 판정용,필수
+판정입력,recent_12m_claim_count,INT,Y,N,최근12개월_청구건수,신규,E08 판정용,필수
+판정입력,in_exemption_period_flag,CHAR(1),Y,N,면책기간내여부,신규,E11 판정용,필수
+판정입력,length_of_stay_days,INT,Y,N,입원일수,파생,E12 판정용,필수
+판정입력,no_secondary_diagnosis_flag,CHAR(1),Y,N,부상병없음,신규,A07 판정용,필수
+판정결과,auto_payment_candidate_flag,CHAR(1),Y,N,자동지급 후보 여부,파생,,필수
+판정결과,auto_payment_decision,VARCHAR(20),Y,N,최종 판정,파생,AUTO_PAY/EXCLUDE/MANUAL_REVIEW,필수
+판정결과,auto_payment_type_code,VARCHAR(10),N,Y,적용 자동지급 유형 코드,파생,A01~A08,필수
+판정결과,auto_payment_exclusion_code,VARCHAR(10),N,Y,적용 제외 유형 코드,파생,E01~E13,필수
+판정결과,processing_status,VARCHAR(20),Y,N,처리상태,신규,지급/부지급/인심사대기,필수
+판정결과,rule_version,VARCHAR(20),Y,N,룰 버전,신규,스키마 버전 고정용,필수
+판정결과,confidence_score,"DECIMAL(5,2)",Y,N,신뢰도,신규,,선택
+세그먼트,segment_code,VARCHAR(20),Y,N,segment 코드,신규,,필수
+세그먼트,segment_name,VARCHAR(50),Y,N,segment 명,신규,,필수
+세그먼트,segment_before,VARCHAR(20),Y,N,변경 전 segment,신규,,선택
+세그먼트,segment_after,VARCHAR(20),Y,N,변경 후 segment,신규,,선택
+세그먼트,segment_change_flag,CHAR(1),Y,N,segment 변경 여부,파생,,선택
+세그먼트,segment_change_reason,TEXT,N,Y,segment 변경 사유,신규,설명용,선택
+메타,batch_id,VARCHAR(30),Y,N,적재 배치 ID,신규,,필수
+메타,source_system,VARCHAR(50),Y,N,원천 시스템명,신규,,필수
+메타,ingested_at,TIMESTAMP,Y,N,적재 시각,신규,,필수
+메타,updated_at,TIMESTAMP,Y,N,수정 시각,신규,,필수

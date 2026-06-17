@@ -1,0 +1,49 @@
+﻿column_name,data_type,pk_flag,required_flag,null_allowed,default_value,description,recommended_addition
+claim_id,VARCHAR(20),Y,Y,N,,청구 건 고유 식별자,claim fact PK
+receipt_no,VARCHAR(20),N,Y,N,,접수번호,
+customer_id,VARCHAR(20),N,Y,N,,고객 식별자,
+contract_no,VARCHAR(30),N,Y,N,,보험 계약 식별자,
+claim_month,CHAR(7),N,Y,N,,청구 기준 연월,대시보드/리포트 집계 키
+snapshot_month,CHAR(7),N,Y,N,,월말 스냅샷 기준 연월,월말 비교 기준
+snapshot_date,DATE,N,Y,N,,월말 스냅샷 날짜,
+receipt_date,DATE,N,Y,N,,청구 접수일,
+receipt_channel,VARCHAR(20),N,Y,N,,접수경로,
+treatment_type,VARCHAR(10),N,Y,N,,진료구분,
+hospital_name,VARCHAR(100),N,Y,N,,병원명,
+hospital_code,VARCHAR(20),N,Y,N,,병원 코드,
+hospital_type,VARCHAR(20),N,Y,N,,병원급,
+diagnosis_code_primary,VARCHAR(20),N,Y,N,,대표 진단코드,
+diagnosis_code_secondary,VARCHAR(100),N,N,Y,,부상병/보조 진단코드,복수코드 가능
+benefit_covered_sum,"NUMERIC(14,0)",N,Y,N,,급여 합계,
+benefit_noncovered_sum,"NUMERIC(14,0)",N,Y,N,,비급여 합계,
+benefit_noncovered_certification_amount,"NUMERIC(14,0)",N,Y,N,,비급여 제증명료,A02 판정용
+benefit_noncovered_injection_amount,"NUMERIC(14,0)",N,Y,N,,비급여 주사료,E02 판정용
+total_medical_amount,"NUMERIC(14,0)",N,Y,N,,총발생의료비,룰 조건 핵심
+noncovered_ratio,"DECIMAL(5,2)",N,Y,N,,비급여 비중,A08/E07 판정용
+deducted_amount,"NUMERIC(14,0)",N,Y,N,,삭감금액,
+paid_amount,"NUMERIC(14,0)",N,Y,N,,총지급금액,
+burden_exclusion_flag,CHAR(1),N,Y,N,,부담보여부,E01 판정용
+other_insurance_flag,CHAR(1),N,Y,N,,타사실손계약여부,E04 판정용
+field_investigation_flag,CHAR(1),N,Y,N,,현장조사이력여부,E05 판정용
+contract_status,VARCHAR(20),N,Y,N,,계약상태,E06/E13 판정용
+recent_12m_claim_count,INT,N,Y,N,,최근12개월_청구건수,E08 판정용
+in_exemption_period_flag,CHAR(1),N,Y,N,,면책기간내여부,E11 판정용
+length_of_stay_days,INT,N,Y,N,,입원일수,E12 판정용
+no_secondary_diagnosis_flag,CHAR(1),N,Y,N,,부상병없음,A07 판정용
+auto_payment_candidate_flag,CHAR(1),N,Y,N,,자동지급 후보 여부,
+auto_payment_decision,VARCHAR(20),N,Y,N,,최종 판정,AUTO_PAY/EXCLUDE/MANUAL_REVIEW
+auto_payment_type_code,VARCHAR(10),N,N,Y,,적용 자동지급 유형 코드,A01~A08
+auto_payment_exclusion_code,VARCHAR(10),N,N,Y,,적용 제외 유형 코드,E01~E13
+processing_status,VARCHAR(20),N,Y,N,,처리상태,지급/부지급/인심사대기
+rule_version,VARCHAR(20),N,Y,N,,룰 버전,스키마 버전 고정용
+confidence_score,"DECIMAL(5,2)",N,Y,N,,신뢰도,
+segment_code,VARCHAR(20),N,Y,N,,segment 코드,
+segment_name,VARCHAR(50),N,Y,N,,segment 명,
+segment_before,VARCHAR(20),N,Y,N,,변경 전 segment,
+segment_after,VARCHAR(20),N,Y,N,,변경 후 segment,
+segment_change_flag,CHAR(1),N,Y,N,,segment 변경 여부,
+segment_change_reason,TEXT,N,N,Y,,segment 변경 사유,설명용
+batch_id,VARCHAR(30),N,Y,N,,적재 배치 ID,
+source_system,VARCHAR(50),N,Y,N,,원천 시스템명,
+ingested_at,TIMESTAMP,N,Y,N,,적재 시각,
+updated_at,TIMESTAMP,N,Y,N,,수정 시각,
