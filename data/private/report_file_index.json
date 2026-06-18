@@ -1,47 +1,159 @@
 {
-  "generated_at": "2026-06-17T06:20:10Z",
+  "generated_at": "2026-06-18T01:06:04Z",
   "reports": [
+    {
+      "snapshot_month": "2026-05",
+      "file_name": "monthly_auto_payment_report_2026-05.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-05.docx",
+      "updated_at": "2026-06-17T12:55:00Z",
+      "size_bytes": 39223
+    },
+    {
+      "snapshot_month": "2026-04",
+      "file_name": "monthly_auto_payment_report_2026-04.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-04.docx",
+      "updated_at": "2026-06-17T12:11:54Z",
+      "size_bytes": 39189
+    },
+    {
+      "snapshot_month": "2026-03",
+      "file_name": "monthly_auto_payment_report_2026-03.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-03.docx",
+      "updated_at": "2026-06-18T00:32:22Z",
+      "size_bytes": 39585
+    },
+    {
+      "snapshot_month": "2026-02",
+      "file_name": "monthly_auto_payment_report_2026-02.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-02.docx",
+      "updated_at": "2026-06-18T00:59:03Z",
+      "size_bytes": 39572
+    },
+    {
+      "snapshot_month": "2026-01",
+      "file_name": "monthly_auto_payment_report_2026-01.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-01.docx",
+      "updated_at": "2026-06-18T01:04:38Z",
+      "size_bytes": 39575
+    },
+    {
+      "snapshot_month": "2025-12",
+      "file_name": "monthly_auto_payment_report_2025-12.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
+      "size_bytes": 38851
+    },
     {
       "snapshot_month": "2025-12",
       "file_name": "monthly_auto_payment_report_2025-12_v6.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v6.docx",
-      "updated_at": "2026-06-16T12:48:34.397189Z",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v6.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
       "size_bytes": 39115
     },
     {
       "snapshot_month": "2025-12",
       "file_name": "monthly_auto_payment_report_2025-12_v5.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v5.docx",
-      "updated_at": "2026-06-16T12:42:58.918312Z",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v5.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
       "size_bytes": 39078
     },
     {
       "snapshot_month": "2025-12",
       "file_name": "monthly_auto_payment_report_2025-12_v4.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v4.docx",
-      "updated_at": "2026-06-16T12:37:55.320482Z",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v4.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
       "size_bytes": 39076
     },
     {
       "snapshot_month": "2025-12",
       "file_name": "monthly_auto_payment_report_2025-12_v3.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v3.docx",
-      "updated_at": "2026-06-16T12:29:52.505884Z",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v3.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
       "size_bytes": 38769
     },
     {
       "snapshot_month": "2025-12",
       "file_name": "monthly_auto_payment_report_2025-12_template_v2.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_template_v2.docx",
-      "updated_at": "2026-06-16T12:15:13.156883Z",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_template_v2.docx",
+      "updated_at": "2026-06-17T07:08:04Z",
       "size_bytes": 39375
     },
     {
-      "snapshot_month": "2025-12",
-      "file_name": "monthly_auto_payment_report_2025-12.docx",
-      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12.docx",
-      "updated_at": "2026-06-16T07:51:00.789567Z",
-      "size_bytes": 38851
+      "snapshot_month": "2025-11",
+      "file_name": "monthly_auto_payment_report_2025-11.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-11.docx",
+      "updated_at": "2026-06-18T01:04:48Z",
+      "size_bytes": 39585
+    },
+    {
+      "snapshot_month": "2025-10",
+      "file_name": "monthly_auto_payment_report_2025-10.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-10.docx",
+      "updated_at": "2026-06-18T01:04:58Z",
+      "size_bytes": 39598
+    },
+    {
+      "snapshot_month": "2025-09",
+      "file_name": "monthly_auto_payment_report_2025-09.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-09.docx",
+      "updated_at": "2026-06-18T01:05:05Z",
+      "size_bytes": 39596
+    },
+    {
+      "snapshot_month": "2025-08",
+      "file_name": "monthly_auto_payment_report_2025-08.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-08.docx",
+      "updated_at": "2026-06-18T01:05:12Z",
+      "size_bytes": 39572
+    },
+    {
+      "snapshot_month": "2025-07",
+      "file_name": "monthly_auto_payment_report_2025-07.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-07.docx",
+      "updated_at": "2026-06-18T01:05:20Z",
+      "size_bytes": 39590
+    },
+    {
+      "snapshot_month": "2025-06",
+      "file_name": "monthly_auto_payment_report_2025-06.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-06.docx",
+      "updated_at": "2026-06-18T01:05:27Z",
+      "size_bytes": 39583
+    },
+    {
+      "snapshot_month": "2025-05",
+      "file_name": "monthly_auto_payment_report_2025-05.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-05.docx",
+      "updated_at": "2026-06-18T01:05:35Z",
+      "size_bytes": 39589
+    },
+    {
+      "snapshot_month": "2025-04",
+      "file_name": "monthly_auto_payment_report_2025-04.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-04.docx",
+      "updated_at": "2026-06-18T01:05:41Z",
+      "size_bytes": 39600
+    },
+    {
+      "snapshot_month": "2025-03",
+      "file_name": "monthly_auto_payment_report_2025-03.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-03.docx",
+      "updated_at": "2026-06-18T01:05:50Z",
+      "size_bytes": 39581
+    },
+    {
+      "snapshot_month": "2025-02",
+      "file_name": "monthly_auto_payment_report_2025-02.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-02.docx",
+      "updated_at": "2026-06-18T01:05:57Z",
+      "size_bytes": 39587
+    },
+    {
+      "snapshot_month": "2025-01",
+      "file_name": "monthly_auto_payment_report_2025-01.docx",
+      "file_path": "/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-01.docx",
+      "updated_at": "2026-06-18T01:06:04Z",
+      "size_bytes": 39408
     }
   ]
 }

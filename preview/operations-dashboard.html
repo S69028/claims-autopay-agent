@@ -551,6 +551,172 @@
       font-weight: 800;
     }
 
+    .tooltip-wrap {
+      position: relative;
+      flex: none;
+    }
+
+    .tooltip-toggle {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(15, 31, 56, 0.06);
+    }
+
+    .tooltip-toggle::-webkit-details-marker { display: none; }
+
+    .tooltip-toggle:hover {
+      color: var(--blue);
+      border-color: rgba(77, 132, 255, 0.3);
+    }
+
+    .tooltip-popover {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: min(360px, 78vw);
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(77, 132, 255, 0.18);
+      background: #ffffff;
+      box-shadow: 0 20px 50px rgba(15, 31, 56, 0.14);
+      z-index: 12;
+    }
+
+    .tooltip-popover::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      right: 12px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-left: 1px solid rgba(77, 132, 255, 0.18);
+      border-top: 1px solid rgba(77, 132, 255, 0.18);
+      transform: rotate(45deg);
+    }
+
+    .tooltip-popover h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .tooltip-popover p {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .tooltip-popover ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .tooltip-popover strong {
+      color: var(--text);
+    }
+
+    .factor-intro {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .factor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .factor-card {
+      border: 1px solid #d9e3f1;
+      background: linear-gradient(180deg, #ffffff, #f7faff);
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .factor-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .factor-card-head h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .factor-card-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .factor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border: 1px solid #e4ebf4;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .factor-table th,
+    .factor-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eef3f8;
+      vertical-align: middle;
+    }
+
+    .factor-table th {
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .factor-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .factor-value {
+      max-width: 150px;
+      white-space: normal;
+      word-break: keep-all;
+      line-height: 1.4;
+    }
+
+    .factor-delta {
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
     .callout-list {
       display: grid;
       gap: 10px;
@@ -586,6 +752,49 @@
       white-space: normal;
     }
 
+    .reason-cell {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .reason-text {
+      min-width: 0;
+      white-space: normal;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .reason-tooltip {
+      position: relative;
+      flex: none;
+    }
+
+    .reason-toggle {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(77, 132, 255, 0.28);
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(15, 31, 56, 0.06);
+    }
+
+    .reason-toggle::-webkit-details-marker { display: none; }
+
+    .reason-popover {
+      right: -2px;
+      width: min(380px, 82vw);
+    }
+
     .table-wrap {
       margin-top: 4px;
       border: 1px solid var(--line);
@@ -600,6 +809,19 @@
 
     .auto-type-scroll {
       max-height: 380px;
+    }
+
+    .archive-report-scroll {
+      max-height: 460px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+    }
+
+    .archive-report-scroll thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
     .empty-row {
@@ -888,7 +1110,7 @@
           <div class="topbar-row">
             <div>
               <h2 class="page-title">자동지급 운영 모니터링</h2>
-              <div class="page-subtitle">월말 기준 자동지급 운영 현황을 빠르게 읽고, 전월 대비 변화와 segment 변화를 확인합니다.</div>
+              <div class="page-subtitle">월말 기준 자동지급 운영 현황을 빠르게 읽고, 전월 대비 변화와 factor 기반 변화 설명을 확인합니다.</div>
             </div>
             <div class="topbar-actions">
               <div class="topbar-action">
@@ -1048,7 +1270,7 @@
           <div class="panel-header">
             <div>
               <h3 class="panel-title">변화 요약</h3>
-              <p class="panel-sub">전월 대비 변화와 segment 변경 내역을 표 형태로 보여줍니다.</p>
+              <p class="panel-sub">전월 대비 변화와 factor 요약, 그리고 원본 segment 변경 내역을 함께 보여줍니다.</p>
             </div>
           </div>
           <div class="panel-body section-stack">
@@ -1079,28 +1301,24 @@
 
             <section class="callout">
               <div class="callout-title">
-                <h3>segment 변화</h3>
+                <h3>factor 변화</h3>
+                <details class="tooltip-wrap">
+                  <summary class="tooltip-toggle" aria-label="factor 설명 보기">?</summary>
+                  <div class="tooltip-popover" role="tooltip">
+                    <h4>factor를 쉽게 읽는 법</h4>
+                    <p>여기서 segment 해석은 내부 코드 이동이 아니라 청구 factor의 전월 대비 변화로 읽습니다.</p>
+                    <ul>
+                      <li><strong>receipt_channel</strong>: 대면/비대면/실손24 같은 접수 경로가 바뀌었는지 봅니다.</li>
+                      <li><strong>treatment_type</strong>: 통원/입원 비율이 전월과 비교해 어떻게 달라졌는지 봅니다.</li>
+                      <li><strong>hospital_type</strong>: 의원/병원/종합병원/상급종합 같은 병원종별이 자동지급률에 어떤 영향을 줬는지 봅니다.</li>
+                      <li><strong>diagnosis_code_primary</strong>: 주상병코드별 자동지급률이 전월보다 올랐는지 내렸는지 봅니다.</li>
+                      <li><strong>변화 사유</strong>: 원문 사유는 참고용이고, 근거가 약하면 확인 필요를 붙입니다.</li>
+                    </ul>
+                  </div>
+                </details>
               </div>
-              <div class="table-wrap segment-table" style="margin-top:0;">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>변경 전 segment</th>
-                      <th>설명</th>
-                      <th>변경 후 segment</th>
-                      <th>설명</th>
-                      <th>건수</th>
-                      <th>비중</th>
-                      <th>변화 사유</th>
-                    </tr>
-                  </thead>
-                  <tbody id="segment-body">
-                    <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:44%;height:16px;"></div></td></tr>
-                    <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:52%;height:16px;"></div></td></tr>
-                    <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:48%;height:16px;"></div></td></tr>
-                  </tbody>
-                </table>
-              </div>
+              <p class="factor-intro">전월 대비 자동지급률을 변화시킨 factor를 점검합니다.</p>
+              <div class="factor-grid" id="factor-summary-grid"></div>
             </section>
           </div>
         </section>
@@ -1153,7 +1371,7 @@
             </div>
           </div>
           <div class="panel-body">
-            <div class="table-wrap">
+            <div class="table-wrap archive-report-scroll">
               <table>
                 <thead>
                   <tr>
@@ -1341,8 +1559,11 @@
 
     function toFileHref(filePath) {
       if (!filePath) return '';
-      if (String(filePath).startsWith('file://')) return filePath;
-      return `file://${String(filePath).replace(/^file:\/\//, '')}`;
+      const value = String(filePath);
+      if (value.startsWith('file://') || value.startsWith('http://') || value.startsWith('https://')) {
+        return value;
+      }
+      return new URL(value, window.location.href).href;
     }
 
     function getActiveSubscriptionCount() {
@@ -1468,8 +1689,6 @@
       }
     }
 
-    const SUBSCRIPTION_CSV_PATH = '../data/private/report_subscription_accounts.csv';
-
     function parseCsvLine(line) {
       const cells = [];
       let current = '';
@@ -1533,22 +1752,11 @@
 
     async function loadSubscriptionAccounts() {
       try {
-        const response = await fetch(SUBSCRIPTION_CSV_PATH);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const text = await response.text();
-        return parseCsv(text);
+        const rows = await supaFetch('/rest/v1/report_subscription_account_public', '?select=subscription_id,recipient_name,masked_email,department,active_flag,created_at,updated_at&order=created_at.desc');
+        return Array.isArray(rows) ? rows : [];
       } catch (error) {
-        console.warn('Falling back to embedded subscription data', error);
-        return [
-          {
-            recipient_name: '운영관리자',
-            recipient_email: 'ssongjiuoon@naver.com',
-            department: '운영기획',
-            active_flag: 'Y',
-            created_at: '2026-06-01T09:00:00Z',
-            updated_at: '2026-06-01T09:00:00Z',
-          },
-        ];
+        console.warn('Supabase public subscription fetch failed', error);
+        return [];
       }
     }
 
@@ -1917,11 +2125,20 @@
       `;
     }
 
-    function renderChangeSummary(latest, previous, claimRows) {
-      if (state.isLoading || !latest) {
-        const body = document.getElementById('segment-body');
-        if (body) {
-          body.innerHTML = `
+    function renderChangeSummary(latest, previous, claimRows, previousClaimRows) {
+      const renderLoading = () => {
+        const factorGrid = document.getElementById('factor-summary-grid');
+        if (factorGrid) {
+          factorGrid.innerHTML = `
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+          `;
+        }
+        const segmentBody = document.getElementById('segment-body');
+        if (segmentBody) {
+          segmentBody.innerHTML = `
             <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:32%;height:16px;"></div></td></tr>
             <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:48%;height:16px;"></div></td></tr>
             <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:40%;height:16px;"></div></td></tr>
@@ -1937,15 +2154,167 @@
             <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:30%;height:16px;"></div></td></tr>
           `;
         }
+      };
+
+      if (state.isLoading || !latest) {
+        renderLoading();
         return;
       }
-      const rows = Array.isArray(claimRows) ? claimRows : [];
-      const segmentLabels = {
-        'SEG-A': '소액 통원',
-        'SEG-B': '반복 통원',
-        'SEG-C': '확정 통원',
-        'SEG-D': '제외 검토',
+
+      const currentRows = Array.isArray(claimRows) ? claimRows : [];
+      const previousRows = Array.isArray(previousClaimRows)
+        ? previousClaimRows
+        : getClaimsForMonth(previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || ''));
+
+      const factorConfigs = [
+        { key: 'receipt_channel', title: '접수채널', help: '대면/비대면/실손24처럼 청구가 들어온 경로' },
+        { key: 'treatment_type', title: '진료구분', help: '통원/입원처럼 치료 형태가 어떻게 나뉘었는지' },
+        { key: 'hospital_type', title: '병원종별', help: '의원/병원/종합병원/상급종합처럼 병원 규모가 어떻게 달라졌는지' },
+        { key: 'diagnosis_code_primary', title: '주상병코드', help: '질병 코드별로 자동지급률이 어떻게 달라졌는지' },
+      ];
+
+      const factorReasonHelp = {
+        '변화 없음': {
+          summary: '전월과 같은 구조라서 추가 해석이 거의 필요하지 않은 상태예요.',
+          bullets: [
+            'factor 비율이 크게 바뀌지 않았습니다.',
+            '자동지급률 변화의 직접 원인이라고 보기 어렵습니다.',
+          ],
+        },
+        '표준 심사 유지': {
+          summary: '원본 기록상 같은 흐름을 유지했다는 뜻이지만, 실제 해석은 factor 요약을 먼저 봐야 합니다.',
+          bullets: [
+            '이 문구만으로 판단을 끝내지 않습니다.',
+            '어떤 factor가 바뀌었는지 위 요약을 같이 봅니다.',
+          ],
+        },
+        '표준 심사 세그먼트 조정': {
+          summary: '원본 메모상 분류를 다시 맞췄다는 뜻이고, 실제로는 어떤 factor가 바뀌었는지 확인해야 합니다.',
+          bullets: [
+            '청구 특성 변화가 있었는지 먼저 확인합니다.',
+            '자동지급률 변화는 위 factor 표를 우선으로 봅니다.',
+          ],
+        },
+        '제외유형 매칭으로 인심사 세그먼트 이동': {
+          summary: '원본 메모상 사람 확인이 필요하다고 본 기록입니다. 다만 근거는 factor 변화로 같이 봅니다.',
+          bullets: [
+            '제외 규칙에 걸린 것인지 확인합니다.',
+            '원문 사유만으로 단정하지 않습니다.',
+          ],
+        },
+        '인심사 유지': {
+          summary: '계속 사람 확인이 필요한 상태로 본 기록입니다. 실제 원인은 factor 변화와 함께 봐야 합니다.',
+          bullets: [
+            '자동지급 후보로 강하게 보지 않습니다.',
+            '원문 메모는 참고용입니다.',
+          ],
+        },
+        '청구특성 변화에 따라 세그먼트 조정': {
+          summary: '청구 특성 변화가 있어 분류를 조정한 기록이지만, 어떤 factor가 바뀌었는지 우선 봐야 합니다.',
+          bullets: [
+            'treatment_type, hospital_type, diagnosis_code_primary 같은 factor를 확인합니다.',
+            '자동지급률 변화는 수치로 우선 해석합니다.',
+          ],
+        },
       };
+
+      const factorGrid = document.getElementById('factor-summary-grid');
+      const normalizeFactorValue = (value) => String(value ?? '').trim() || '-';
+      const groupRateRows = (rows, key) => {
+        const totalByValue = groupCount(rows, (row) => normalizeFactorValue(row[key]));
+        const autoByValue = groupCount(rows, (row) => normalizeFactorValue(row[key]), (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const values = new Set([...totalByValue.keys(), ...autoByValue.keys()]);
+        return [...values].map((value) => {
+          const total = totalByValue.get(value) || 0;
+          const auto = autoByValue.get(value) || 0;
+          return {
+            value,
+            total,
+            auto,
+            rate: total ? (auto / total) * 100 : 0,
+          };
+        }).filter((item) => item.total >= 20);
+      };
+
+      const factorSummary = factorConfigs.map((factor) => {
+        const current = groupRateRows(currentRows, factor.key);
+        const previous = groupRateRows(previousRows, factor.key);
+        const previousMap = new Map(previous.map((row) => [row.value, row]));
+        const rows = current.map((row) => {
+          const prev = previousMap.get(row.value);
+          const previousRate = prev?.rate ?? 0;
+          return {
+            ...row,
+            previousRate,
+            delta: row.rate - previousRate,
+          };
+        }).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+        const topRows = rows.slice(0, 3);
+        const lead = topRows[0] || null;
+        const summary = lead
+          ? (Math.abs(lead.delta) >= 5
+            ? `${lead.value}의 자동지급률이 ${lead.previousRate.toFixed(1)}% → ${lead.rate.toFixed(1)}%로 ${lead.delta >= 0 ? '상승' : '하락'}했습니다.`
+            : `가장 큰 변화는 ${lead.value}의 ${lead.delta >= 0 ? '상승' : '하락'} ${Math.abs(lead.delta).toFixed(1)}pp입니다. 확인 필요 수준입니다.`)
+          : '비교할 충분한 데이터가 없습니다. 확인 필요.';
+        return {
+          ...factor,
+          rows: topRows,
+          lead,
+          summary,
+        };
+      });
+
+      if (factorGrid) {
+        factorGrid.innerHTML = factorSummary.map((factor) => {
+          const badgeClass = factor.lead && Math.abs(factor.lead.delta) >= 5
+            ? (factor.lead.delta >= 0 ? 'green' : 'red')
+            : 'amber';
+          const badgeText = factor.lead
+            ? `${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp`
+            : 'N/A';
+          const rowsHtml = factor.rows.length
+            ? factor.rows.map((item) => {
+              const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
+              const direction = item.delta > 0 ? '상승' : item.delta < 0 ? '하락' : '변화 없음';
+              return `
+                <tr>
+                  <td class="factor-value">${item.value}</td>
+                  <td>${item.previousRate.toFixed(1)}%</td>
+                  <td>${item.rate.toFixed(1)}%</td>
+                  <td class="factor-delta"><span class="badge ${deltaClass}">${direction} ${item.delta >= 0 ? '+' : ''}${item.delta.toFixed(1)}pp</span></td>
+                </tr>`;
+            }).join('')
+            : `<tr><td colspan="4" class="empty-row" style="padding:10px 8px;">비교할 충분한 데이터가 없습니다.</td></tr>`;
+          const note = factor.lead
+            ? `${factor.lead.value} 기준 ${factor.lead.previousRate.toFixed(1)}% → ${factor.lead.rate.toFixed(1)}% (${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp)`
+            : '충분한 데이터가 없어 요약할 수 없습니다.';
+          return `
+            <article class="factor-card">
+              <div class="factor-card-head">
+                <div>
+                  <h4>${factor.title}</h4>
+                </div>
+                <span class="badge ${badgeClass}">${badgeText}</span>
+              </div>
+              <div class="factor-card-note">${factor.summary}</div>
+              <table class="factor-table">
+                <thead>
+                  <tr>
+                    <th>값</th>
+                    <th>전월</th>
+                    <th>이번 달</th>
+                    <th>변화</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+              <div class="factor-card-note">${note}</div>
+            </article>`;
+        }).join('');
+      }
+
       const badges = document.querySelectorAll('.change-panel .callout .badge');
       if (badges[0]) {
         badges[0].textContent = latest.status_label;
@@ -1968,30 +2337,50 @@
       }
 
       const changes = groupCount(
-        rows,
-        (row) => `${row.segment_before}→${row.segment_after}｜${row.segment_change_reason}`,
+        currentRows,
+        (row) => `${row.segment_code || ''}｜${row.segment_name || ''}｜${row.segment_before || ''}→${row.segment_after || ''}｜${row.segment_change_reason || ''}`,
         (row) => row.segment_change_flag === 'Y'
       );
       const sortedChanges = [...changes.entries()].sort((a, b) => b[1] - a[1]);
-      if (!sortedChanges.length) {
-        const body = document.getElementById('segment-body');
-        if (body) body.innerHTML = `<tr><td colspan="7" class="empty-row">segment 변화가 없는 월입니다.</td></tr>`;
-        return;
-      }
       const segmentBody = document.getElementById('segment-body');
-      if (segmentBody) {
+      if (!sortedChanges.length) {
+        if (segmentBody) {
+          segmentBody.innerHTML = `<tr><td colspan="7" class="empty-row">원본 segment 이력은 없지만 factor 변화는 위에서 확인할 수 있습니다.</td></tr>`;
+        }
+      } else if (segmentBody) {
         segmentBody.innerHTML = sortedChanges.map(([key, count]) => {
-          const [beforeAfter, reason] = key.split('｜');
-          const [beforeSeg, afterSeg] = beforeAfter.split('→');
+          const [beforeCode, beforeName, beforeAfter, reason] = key.split('｜');
+          const [beforeSeg, afterSeg] = String(beforeAfter || '').split('→');
+          const reasonHelp = factorReasonHelp[reason] || {
+            summary: '이 사유는 원문 메모입니다. 실제 해석은 위 factor 변화 요약을 먼저 봐야 합니다.',
+            bullets: [
+              `변경 전: ${beforeSeg || '-'}`,
+              `변경 후: ${afterSeg || '-'}`,
+            ],
+          };
           return `
             <tr>
-              <td>${beforeSeg}</td>
-              <td>${segmentLabels[beforeSeg] || '-'}</td>
-              <td>${afterSeg}</td>
-              <td>${segmentLabels[afterSeg] || '-'}</td>
+              <td>${beforeCode || '-'}</td>
+              <td>${beforeName || '-'}</td>
+              <td>${beforeSeg || '-'}</td>
+              <td>${afterSeg || '-'}</td>
               <td>${fmtInt(count)}</td>
-              <td>${pct((count / rows.length) * 100, 1)}</td>
-              <td>${reason}</td>
+              <td>${pct((count / currentRows.length) * 100, 1)}</td>
+              <td>
+                <div class="reason-cell">
+                  <span class="reason-text">${reason}</span>
+                  <details class="reason-tooltip">
+                    <summary class="reason-toggle" aria-label="원문 사유 설명 보기">?</summary>
+                    <div class="tooltip-popover reason-popover" role="tooltip">
+                      <h4>원문 사유</h4>
+                      <p>${reasonHelp.summary}</p>
+                      <ul>
+                        ${reasonHelp.bullets.map((item) => `<li>${item}</li>`).join('')}
+                      </ul>
+                    </div>
+                  </details>
+                </div>
+              </td>
             </tr>`;
         }).join('');
       }
@@ -2000,7 +2389,6 @@
       if (autoChangeBody) {
         const prevMonth = previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || '');
         const prevRows = getClaimsForMonth(prevMonth);
-        const currentRows = rows;
         const currentCounts = groupCount(currentRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
         const previousCounts = groupCount(prevRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
         const codes = new Set([...currentCounts.keys(), ...previousCounts.keys()]);
@@ -2095,12 +2483,12 @@
           row.notes,
         ].join(' '));
         const matchesQuery = !query || haystack.includes(query);
-        const hasFile = hasAvailableReportFile(row.snapshot_month);
-        return matchesStatus && matchesQuery && hasFile;
+        return matchesStatus && matchesQuery;
       });
       const filteredSubscriptions = subscriptions.filter((row) => {
         const haystack = normalizeText([
           row.recipient_name,
+          row.masked_email,
           row.recipient_email,
           row.department,
           row.active_flag,
@@ -2158,10 +2546,11 @@
           subscriptionRows.innerHTML = `<tr><td colspan="3" class="empty-row">조건에 맞는 구독계정이 없습니다.</td></tr>`;
         } else {
           subscriptionRows.innerHTML = sortedAccounts.map((row) => {
+            const displayEmail = row.masked_email || row.recipient_email || '-';
             return `
               <tr>
                 <td>${row.recipient_name}</td>
-                <td>${maskEmail(row.recipient_email)}</td>
+                <td>${displayEmail}</td>
                 <td>${row.created_at?.slice(0, 7) ?? '-'}</td>
               </tr>`;
           }).join('');
@@ -2195,7 +2584,7 @@
       safeRender(() => renderTrendChart(ctx.windowSnapshots), 'trend');
       safeRender(() => renderChannelCard(ctx.currentClaims), 'channel');
       safeRender(() => renderTreatmentCard(ctx.currentClaims), 'treatment');
-      safeRender(() => renderChangeSummary(latest, prev, ctx.currentClaims), 'change-summary');
+      safeRender(() => renderChangeSummary(latest, prev, ctx.currentClaims, ctx.previousClaims), 'change-summary');
       safeRender(() => renderAutoPaymentTable(ctx.currentClaims), 'auto-type-table');
       renderArchive(state.reportArchives, state.subscriptions, {});
     }
@@ -2271,7 +2660,7 @@
         supaFetch('/rest/v1/monthly_auto_payment_snapshot_fact', '?select=*&order=snapshot_month.asc'),
         supaFetchAllPages(
           '/rest/v1/claim_payment_fact',
-          '?select=claim_month,receipt_channel,treatment_type,auto_payment_decision,auto_payment_type_code,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
+          '?select=claim_month,receipt_channel,treatment_type,hospital_type,diagnosis_code_primary,auto_payment_decision,auto_payment_type_code,segment_code,segment_name,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
         ),
         supaFetch('/rest/v1/auto_payment_type_definition', '?select=type_code,type_name,active_flag,priority_order&order=priority_order.asc,type_code.asc'),
         loadReportArchives(),
