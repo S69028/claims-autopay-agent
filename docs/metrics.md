@@ -26,21 +26,21 @@
 | `monthly_auto_payment_snapshot_fact` | 월말 집계 데이터 | 전월 대비 변화, 처리효율, 상태 문구 |
 | `auto_payment_type_definition` | 자동지급유형 정의 | 유형 분석 |
 | `auto_payment_exclusion_type_definition` | 자동지급제외유형 정의 | 제외유형 분석 |
-| `claim_payment_fact.segment_*` | segment 변경 정보 | segment 변화 설명 |
+| `claim_payment_fact.segment_*` | segment 원본 기록 | 청구 특성 변화 설명의 원문 근거 |
 
 ## 4) 지표 정의
 
 ### 4-1. 자동지급률
 
 **정의**
-- 자동지급 대상군 중 자동지급 처리된 비율
+- 전체 청구 중 자동지급 처리된 비율
 
 **공식**
-- `자동지급률 = (자동지급 건수 / 자동지급 대상군 건수) * 100`
+- `자동지급률 = (자동지급 건수 / 총 청구 건수) * 100`
 
 **입력**
 - 분자: `auto_payment_count`
-- 분모: `auto_payment_candidate_count`
+- 분모: `total_claim_count`
 
 **예외 규칙**
 - 분모가 0이면 `NULL`
@@ -63,23 +63,28 @@
 - 전월값이 0이면 증감률은 `NULL`
 - 전월 데이터가 없으면 계산하지 않음
 
-### 4-3. segment 변화
+### 4-3. 청구 특성 변화
 
 **정의**
-- 월말 스냅샷 기준으로 segment가 이전 월과 비교해 어떻게 바뀌었는지 나타내는 값
+- 전월 대비 자동지급률 변화에 영향을 준 청구 특성 요소를 설명하는 값
 
 **공식**
-- `segment_change_flag = (segment_before != segment_after)`
-- `segment_change_summary = 변경 전 segment + 변경 후 segment + 변화 사유`
+- `factor_change_flag = 청구 특성 변화 존재 여부`
+- `factor_change_summary = 청구 특성 + 전월 자동지급률 + 당월 자동지급률 + 변화 사유`
 
 **입력**
+- `claim_payment_fact.receipt_channel`
+- `claim_payment_fact.treatment_type`
+- `claim_payment_fact.hospital_type`
+- `claim_payment_fact.diagnosis_code_primary`
 - `claim_payment_fact.segment_before`
 - `claim_payment_fact.segment_after`
 - `claim_payment_fact.segment_change_reason`
 
 **예외 규칙**
-- 변경 전/후 값이 없으면 `확인 필요`
-- 변경 사유가 없으면 설명은 생성하되 `원인 확인 필요`로 표기
+- 청구 특성값이 없으면 `확인 필요`
+- segment 원문 기록은 유지하되 해석은 factor 요약을 우선한다
+- 변화 사유가 없으면 설명은 생성하되 `원인 확인 필요`로 표기
 
 ### 4-4. 처리효율
 
@@ -87,16 +92,15 @@
 - 운영효율을 보여주는 ROI 보고용 지표
 
 **공식**
-- 우선 기본형은 `처리효율 = (자동지급 건수 / 총 청구 건수) * 100`
-- 필요 시 비용환산형은 별도 보조지표로 확장 가능
+- `처리효율 = ((자동지급 건수 + 제외 건수) / 총 청구 건수) * 100`
 
 **입력**
 - `auto_payment_count`
+- `exclusion_count`
 - `total_claim_count`
 
 **예외 규칙**
 - 총 청구 건수가 0이면 `NULL`
-- 비용환산형을 추가할 때는 별도 컬럼과 산식을 문서에 확정한다
 
 ### 4-5. 자동지급 건수 비중
 
@@ -127,21 +131,31 @@
 ### 제외유형별 비중
 - `제외유형별 비중 = 특정 제외유형 건수 / 전체 제외건수 * 100`
 
+### 대상군내 자동지급 전환율
+- `대상군내 자동지급 전환율 = 자동지급 건수 / 자동지급 대상군 건수 * 100`
+
+**입력**
+- `auto_payment_count`
+- `auto_payment_candidate_count`
+
+**예외 규칙**
+- 자동지급 대상군 건수가 0이면 `NULL`
+
 ## 6) 함수 분리 기준
 
 - `calcAutoPaymentRate(snapshot)`  
 - `calcDelta(current, previous)`  
 - `calcSegmentChange(before, after, reason)`  
 - `calcProcessingEfficiency(snapshot, config)`  
-- `calcChangeThreshold(history6m, fallback, minCap)`  
+- `calcChangeThreshold(history6m, k, floor, fallback)`  
 - `calcTypeShare(facts, typeCode)`  
 - `calcExclusionShare(facts, exclusionCode)`  
 
 ## 7) 상태 판정 연계
 
 - 상태 판정 임계치는 `docs/status.md`의 규칙을 따른다.
-- 기본 계산식은 `임계치 = max(직전 6개월 변화량 표준편차, 0.5pp)`이다.
-- 기준월 이전 6개월 데이터가 부족하면 `0.5pp`가 아니라 `1.0pp`를 fallback으로 쓴다.
+- 기본 계산식은 `임계치 = max(2.0 × 직전 최대 6개월 변화량 표준편차, 1.0pp)`이다.
+- 전월차 이력이 3개월 미만이면 `3.0pp`를 fallback으로 쓴다.
 - `calcChangeThreshold`는 변화량 시계열을 입력받아 최종 임계치를 돌려준다.
 
 ## 8) 코드화 전 체크포인트

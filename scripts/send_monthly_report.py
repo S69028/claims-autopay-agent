@@ -17,6 +17,7 @@ import re
 import smtplib
 import sys
 import json
+import subprocess
 from datetime import datetime, timezone
 from email.message import EmailMessage
 from pathlib import Path
@@ -230,6 +231,32 @@ def resolve_report_path(report_path: str | None, report_month: str) -> Path:
     return ROOT / "reports" / f"monthly_auto_payment_report_{report_month}.docx"
 
 
+def ensure_report_file(report_path: Path, report_month: str) -> Path:
+    if report_path.exists():
+        return report_path
+
+    generator = ROOT / "scripts" / "generate_monthly_report.py"
+    if not generator.exists():
+        raise FileNotFoundError(f"report file not found: {report_path}")
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(generator),
+            "--source",
+            "auto",
+            "--month",
+            report_month,
+            "--out",
+            str(report_path),
+        ],
+        check=True,
+    )
+    if not report_path.exists():
+        raise FileNotFoundError(f"report file not found: {report_path}")
+    return report_path
+
+
 def build_message(
     sender: str,
     display_name: str,
@@ -320,8 +347,6 @@ def main() -> int:
     args = parser.parse_args()
 
     report_path = resolve_report_path(args.report_path, args.report_month)
-    if not report_path.exists():
-        raise FileNotFoundError(f"report file not found: {report_path}")
 
     recipients = load_recipients(Path(args.recipients_csv))
     recipient_emails = [row["recipient_email"] for row in recipients if row.get("recipient_email")]
@@ -334,14 +359,6 @@ def main() -> int:
 
     subject_prefix = env("REPORT_DEFAULT_SUBJECT_PREFIX", "[자동심사 현황분석]")
     display_name = env("REPORT_SMTP_DISPLAY_NAME", "자동심사 현황분석 Agent")
-    message = build_message(
-        sender=sender,
-        display_name=display_name,
-        subject_prefix=subject_prefix,
-        report_month=args.report_month,
-        report_path=report_path,
-        recipients=recipient_emails,
-    )
 
     summary = {
         "provider": env("REPORT_SMTP_PROVIDER", "gmail"),
@@ -369,6 +386,17 @@ def main() -> int:
     if args.dry_run:
         print(json.dumps(summary, ensure_ascii=False, indent=2))
         return 0
+
+    report_path = ensure_report_file(report_path, args.report_month)
+    summary["report_path"] = str(report_path)
+    message = build_message(
+        sender=sender,
+        display_name=display_name,
+        subject_prefix=subject_prefix,
+        report_month=args.report_month,
+        report_path=report_path,
+        recipients=recipient_emails,
+    )
 
     sent_at = now_iso()
     try:

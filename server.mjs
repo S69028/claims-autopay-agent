@@ -1,103 +1,88 @@
 import http from 'node:http';
-import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+  REPORT_FILE_INDEX_RUNTIME_PATH,
+  handleSendMonthlyReport,
+} from './lib/report_send_api.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const ROOT = __dirname;
 const PORT = Number(process.env.REPORT_API_PORT || 8787);
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const DASHBOARD_PATH = path.join(ROOT, 'preview', 'operations-dashboard.html');
+const PRIVATE_DIR = path.join(ROOT, 'data', 'private');
+const REPORTS_DIR = path.join(ROOT, 'reports');
 
-function sendJson(res, statusCode, payload) {
-  res.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  });
-  res.end(JSON.stringify(payload));
-}
-
-function collectBody(req) {
-  return new Promise((resolveBody, rejectBody) => {
-    const chunks = [];
-    req.on('data', (chunk) => chunks.push(chunk));
-    req.on('end', () => {
-      try {
-        const raw = Buffer.concat(chunks).toString('utf8');
-        resolveBody(raw ? JSON.parse(raw) : {});
-      } catch (error) {
-        rejectBody(error);
-      }
-    });
-    req.on('error', rejectBody);
-  });
-}
-
-function runSendScript(reportMonth) {
-  return new Promise((resolveRun, rejectRun) => {
-    const scriptPath = resolve(ROOT, 'scripts', 'send_monthly_report.py');
-    const child = spawn('python3', [scriptPath, '--report-month', reportMonth], {
-      cwd: ROOT,
-      env: process.env,
-    });
-
-    let stdout = '';
-    let stderr = '';
-    child.stdout.on('data', (chunk) => {
-      stdout += chunk.toString('utf8');
-    });
-    child.stderr.on('data', (chunk) => {
-      stderr += chunk.toString('utf8');
-    });
-    child.on('error', rejectRun);
-    child.on('close', (code) => {
-      if (code !== 0) {
-        rejectRun(new Error(stderr.trim() || `send script exited with code ${code}`));
-        return;
-      }
-      try {
-        resolveRun(JSON.parse(stdout.trim() || '{}'));
-      } catch (error) {
-        rejectRun(new Error(`failed to parse send script output: ${error.message}`));
-      }
-    });
-  });
-}
-
-const server = http.createServer(async (req, res) => {
-  if (req.method === 'OPTIONS') {
-    sendJson(res, 204, {});
-    return;
-  }
-
-  if (req.method !== 'POST' || req.url !== '/api/send-monthly-report') {
-    sendJson(res, 404, { error: 'not found' });
-    return;
-  }
-
-  try {
-    const body = await collectBody(req);
-    const reportMonth = String(body.reportMonth || '').trim();
-    if (!/^\d{4}-\d{2}$/.test(reportMonth)) {
-      sendJson(res, 400, { error: 'reportMonth must be YYYY-MM' });
-      return;
+async function readFirstExisting(paths) {
+  for (const candidate of paths) {
+    try {
+      return await fs.readFile(candidate, 'utf8');
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
     }
-
-    const result = await runSendScript(reportMonth);
-    sendJson(res, 200, {
-      ok: true,
-      ...result,
-      report_month: reportMonth,
-    });
-  } catch (error) {
-    sendJson(res, 500, {
-      ok: false,
-      error: error.message,
-    });
   }
-});
+  throw new Error('not found');
+}
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`report api listening on http://127.0.0.1:${PORT}`);
-});
+async function serverHandler(req, res) {
+  const requestUrl = new URL(req.url || '/', 'http://localhost');
+  const pathname = requestUrl.pathname;
+
+  if (pathname === '/' || pathname === '/index.html' || pathname === '/preview/operations-dashboard.html') {
+    const html = await fs.readFile(DASHBOARD_PATH, 'utf8');
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(html);
+    return;
+  }
+
+  if (pathname === '/api/send-monthly-report') {
+    return handleSendMonthlyReport(req, res);
+  }
+
+  if (pathname === '/data/private/report_file_index.json') {
+    const text = await readFirstExisting([
+      REPORT_FILE_INDEX_RUNTIME_PATH,
+      path.join(PRIVATE_DIR, 'report_file_index.json'),
+    ]);
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(text);
+    return;
+  }
+
+  if (pathname === '/data/private/report_archive_fact.csv') {
+    const text = await readFirstExisting([path.join(PRIVATE_DIR, 'report_archive_fact.csv')]);
+    res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8' });
+    res.end(text);
+    return;
+  }
+
+  if (pathname.startsWith('/reports/') && pathname.endsWith('.docx')) {
+    const filePath = path.join(REPORTS_DIR, path.basename(pathname));
+    try {
+      const file = await fs.readFile(filePath);
+      res.writeHead(200, { 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      res.end(file);
+      return;
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+    }
+  }
+
+  res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify({ error: 'not found' }));
+}
+
+export default serverHandler;
+export { serverHandler };
+
+const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (!process.env.VERCEL && isDirectRun) {
+  const server = http.createServer((req, res) => {
+    void serverHandler(req, res);
+  });
+
+  server.listen(PORT, '127.0.0.1', () => {
+    console.log(`report api listening on http://127.0.0.1:${PORT}`);
+  });
+}

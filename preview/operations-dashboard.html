@@ -306,6 +306,7 @@
 
     .badge.green { background: var(--green-soft); color: var(--green); }
     .badge.blue { background: var(--blue-soft); color: var(--blue); }
+    .badge.gray { background: #edf1f5; color: #728095; }
     .badge.amber { background: var(--amber-soft); color: var(--amber); }
     .badge.red { background: var(--red-soft); color: var(--red); }
 
@@ -391,6 +392,38 @@
       min-height: 420px;
       display: flex;
       flex-direction: column;
+    }
+
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #ebf1f8 25%, #f6f9fd 37%, #ebf1f8 63%);
+      background-size: 400% 100%;
+      animation: skeleton-shimmer 1.25s ease-in-out infinite;
+      border-radius: 10px;
+    }
+
+    .skeleton-line {
+      display: inline-block;
+      height: 14px;
+      border-radius: 999px;
+    }
+
+    .skeleton-block {
+      display: block;
+      border-radius: 14px;
+    }
+
+    .skeleton-hidden {
+      color: transparent !important;
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    @keyframes skeleton-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
     }
 
     .chart-topline {
@@ -518,6 +551,172 @@
       font-weight: 800;
     }
 
+    .tooltip-wrap {
+      position: relative;
+      flex: none;
+    }
+
+    .tooltip-toggle {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(15, 31, 56, 0.06);
+    }
+
+    .tooltip-toggle::-webkit-details-marker { display: none; }
+
+    .tooltip-toggle:hover {
+      color: var(--blue);
+      border-color: rgba(77, 132, 255, 0.3);
+    }
+
+    .tooltip-popover {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: min(360px, 78vw);
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(77, 132, 255, 0.18);
+      background: #ffffff;
+      box-shadow: 0 20px 50px rgba(15, 31, 56, 0.14);
+      z-index: 12;
+    }
+
+    .tooltip-popover::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      right: 12px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-left: 1px solid rgba(77, 132, 255, 0.18);
+      border-top: 1px solid rgba(77, 132, 255, 0.18);
+      transform: rotate(45deg);
+    }
+
+    .tooltip-popover h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .tooltip-popover p {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .tooltip-popover ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .tooltip-popover strong {
+      color: var(--text);
+    }
+
+    .factor-intro {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .factor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .factor-card {
+      border: 1px solid #d9e3f1;
+      background: linear-gradient(180deg, #ffffff, #f7faff);
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .factor-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .factor-card-head h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .factor-card-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .factor-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border: 1px solid #e4ebf4;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .factor-table th,
+    .factor-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eef3f8;
+      vertical-align: middle;
+    }
+
+    .factor-table th {
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .factor-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .factor-value {
+      max-width: 150px;
+      white-space: normal;
+      word-break: keep-all;
+      line-height: 1.4;
+    }
+
+    .factor-delta {
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
     .callout-list {
       display: grid;
       gap: 10px;
@@ -553,12 +752,76 @@
       white-space: normal;
     }
 
+    .reason-cell {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .reason-text {
+      min-width: 0;
+      white-space: normal;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .reason-tooltip {
+      position: relative;
+      flex: none;
+    }
+
+    .reason-toggle {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(77, 132, 255, 0.28);
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(15, 31, 56, 0.06);
+    }
+
+    .reason-toggle::-webkit-details-marker { display: none; }
+
+    .reason-popover {
+      right: -2px;
+      width: min(380px, 82vw);
+    }
+
     .table-wrap {
       margin-top: 4px;
       border: 1px solid var(--line);
       border-radius: 18px;
       overflow: hidden;
       background: white;
+    }
+
+    .table-wrap.scrollable {
+      overflow: auto;
+    }
+
+    .auto-type-scroll {
+      max-height: 380px;
+    }
+
+    .archive-report-scroll {
+      max-height: 460px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+    }
+
+    .archive-report-scroll thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
     .empty-row {
@@ -790,6 +1053,16 @@
       align-items: center;
     }
 
+    .mini-pie-wrap .mini-row {
+      grid-template-columns: 12px auto auto;
+      justify-content: start;
+      gap: 6px;
+    }
+
+    .mini-pie-wrap .mini-row strong {
+      margin-left: 2px;
+    }
+
     .mini-pie {
       width: 140px;
       height: 140px;
@@ -837,7 +1110,7 @@
           <div class="topbar-row">
             <div>
               <h2 class="page-title">자동지급 운영 모니터링</h2>
-              <div class="page-subtitle">월말 기준 자동지급 운영 현황을 빠르게 읽고, 전월 대비 변화와 segment 변화를 확인합니다.</div>
+              <div class="page-subtitle">월말 기준 자동지급 운영 현황을 빠르게 읽고, 전월 대비 변화와 factor 기반 변화 설명을 확인합니다.</div>
             </div>
             <div class="topbar-actions">
               <div class="topbar-action">
@@ -861,36 +1134,36 @@
           <article class="kpi">
             <div>
               <div class="kpi-label">자동지급률</div>
-              <div class="kpi-value">58.4%</div>
-              <div class="kpi-desc">전월 대비 <strong style="color: var(--blue);">+0.7pp</strong></div>
+              <div class="kpi-value skeleton skeleton-line" data-kpi-value style="width:62%;height:28px;"></div>
+              <div class="kpi-desc skeleton skeleton-line" data-kpi-desc style="width:78%;height:14px;margin-top:8px;"></div>
             </div>
           </article>
           <article class="kpi">
             <div>
               <div class="kpi-label">자동지급 건수</div>
-              <div class="kpi-value">4,820</div>
-              <div class="kpi-desc">월말 스냅샷 기준 집계</div>
+              <div class="kpi-value skeleton skeleton-line" data-kpi-value style="width:52%;height:28px;"></div>
+              <div class="kpi-desc skeleton skeleton-line" data-kpi-desc style="width:66%;height:14px;margin-top:8px;"></div>
             </div>
           </article>
           <article class="kpi">
             <div>
-              <div class="kpi-label">인심사 건수</div>
-              <div class="kpi-value">3,406</div>
-              <div class="kpi-desc">인심사 및 제외 유형 포함</div>
+              <div class="kpi-label">자동심사제외 건수</div>
+              <div class="kpi-value skeleton skeleton-line" data-kpi-value style="width:52%;height:28px;"></div>
+              <div class="kpi-desc skeleton skeleton-line" data-kpi-desc style="width:74%;height:14px;margin-top:8px;"></div>
             </div>
           </article>
           <article class="kpi">
             <div>
               <div class="kpi-label">처리효율</div>
-              <div class="kpi-value">52.1%</div>
-              <div class="kpi-desc">전월 대비 <strong style="color: var(--green);">+0.4pp</strong></div>
+              <div class="kpi-value skeleton skeleton-line" data-kpi-value style="width:62%;height:28px;"></div>
+              <div class="kpi-desc skeleton skeleton-line" data-kpi-desc style="width:78%;height:14px;margin-top:8px;"></div>
             </div>
           </article>
           <article class="kpi">
             <div>
               <div class="kpi-label">상태 라벨</div>
-              <div class="kpi-value">안정</div>
-              <div class="kpi-desc">기준월 이전 6개월 표준편차 기반 판정</div>
+              <div class="kpi-value skeleton skeleton-line" data-kpi-value style="width:44%;height:28px;"></div>
+              <div class="kpi-desc skeleton skeleton-line" data-kpi-desc style="width:70%;height:14px;margin-top:8px;"></div>
             </div>
           </article>
         </section>
@@ -908,57 +1181,10 @@
                   <span>좌측 축: 청구건수</span>
                   <span>우측 축: 자동지급률</span>
                 </div>
-                <svg viewBox="0 0 900 380" width="100%" height="380" role="img" aria-label="청구건수와 자동지급률 듀얼축 차트">
-                  <rect x="0" y="0" width="900" height="380" rx="18" fill="#fbfdff" stroke="#e4ebf3"/>
-                  <g stroke="#e6edf5" stroke-width="1">
-                    <line x1="100" y1="320" x2="820" y2="320"/>
-                    <line x1="100" y1="260" x2="820" y2="260"/>
-                    <line x1="100" y1="200" x2="820" y2="200"/>
-                    <line x1="100" y1="140" x2="820" y2="140"/>
-                    <line x1="100" y1="80" x2="820" y2="80"/>
-                  </g>
-                  <g fill="#66748a" font-size="12" font-family="inherit">
-                    <text x="34" y="324">0</text>
-                    <text x="24" y="264">50,000</text>
-                    <text x="18" y="204">100,000</text>
-                    <text x="18" y="144">150,000</text>
-                    <text x="18" y="84">200,000</text>
-                    <text x="834" y="324">0%</text>
-                    <text x="834" y="264">20%</text>
-                    <text x="834" y="204">40%</text>
-                    <text x="834" y="144">60%</text>
-                    <text x="834" y="84">80%</text>
-                  </g>
-                  <g fill="#c9d7ea">
-                    <rect x="132" y="170" width="66" height="150" rx="10"/>
-                    <rect x="248" y="150" width="66" height="170" rx="10"/>
-                    <rect x="364" y="128" width="66" height="192" rx="10"/>
-                    <rect x="480" y="136" width="66" height="184" rx="10"/>
-                    <rect x="596" y="106" width="66" height="214" rx="10"/>
-                    <rect x="712" y="98" width="66" height="222" rx="10"/>
-                  </g>
-                  <path d="M165 126 L281 120 L397 114 L513 110 L629 104 L745 100"
-                        fill="none" stroke="#4d84ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <g fill="#fff" stroke="#4d84ff" stroke-width="4">
-                    <circle cx="165" cy="126" r="6"/>
-                    <circle cx="281" cy="120" r="6"/>
-                    <circle cx="397" cy="114" r="6"/>
-                    <circle cx="513" cy="110" r="6"/>
-                    <circle cx="629" cy="104" r="6"/>
-                    <circle cx="745" cy="100" r="6"/>
-                  </g>
-                  <g fill="#415168" font-size="12" font-family="inherit">
-                    <text x="140" y="354">2025-12</text>
-                    <text x="256" y="354">2026-01</text>
-                    <text x="372" y="354">2026-02</text>
-                    <text x="488" y="354">2026-03</text>
-                    <text x="604" y="354">2026-04</text>
-                    <text x="720" y="354">2026-05</text>
-                  </g>
-                </svg>
+                <div class="skeleton skeleton-block" style="flex:1; min-height: 300px; border:1px solid #dfe8f3; border-radius: 18px;"></div>
                 <div class="chart-legend" aria-label="차트 범례">
-                  <span class="chart-legend-item">청구건수 <span style="width:12px;height:12px;border-radius:3px;background:#c9d7ea;display:inline-block;"></span></span>
-                  <span class="chart-legend-item">자동지급률 <span style="width:12px;height:12px;border-radius:3px;background:#4d84ff;display:inline-block;"></span></span>
+                  <span class="chart-legend-item skeleton skeleton-line" style="width:124px;height:12px;"></span>
+                  <span class="chart-legend-item skeleton skeleton-line" style="width:124px;height:12px;"></span>
                 </div>
               </div>
             </div>
@@ -968,28 +1194,28 @@
             <div class="callout-title">
               <h3>성과 계산</h3>
             </div>
-            <div class="mini-form" style="display:grid;gap:12px;">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;">
-                <div style="display:grid;gap:6px;">
-                  <label style="font-size:12px;color:var(--muted);font-weight:600;">청구년월</label>
-                  <div class="readonly-field" id="performance-month" style="height:42px;">-</div>
+              <div class="mini-form" style="display:grid;gap:12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;">
+                  <div style="display:grid;gap:6px;">
+                    <label style="font-size:12px;color:var(--muted);font-weight:600;">청구년월</label>
+                    <div class="readonly-field skeleton skeleton-line" id="performance-month" style="height:42px;width:100%;"></div>
+                  </div>
+                  <div style="display:grid;gap:6px;">
+                    <label style="font-size:12px;color:var(--muted);font-weight:600;">적용단가(원)</label>
+                    <input class="search" id="performance-unit" style="min-width:0;" type="number" value="1200" min="0" step="1" inputmode="numeric" />
+                  </div>
                 </div>
-                <div style="display:grid;gap:6px;">
-                  <label style="font-size:12px;color:var(--muted);font-weight:600;">적용단가(원)</label>
-                  <input class="search" id="performance-unit" style="min-width:0;" type="number" value="1200" min="0" step="1" inputmode="numeric" />
+                <button class="btn primary" id="performance-calc-btn" type="button">계산하기</button>
+                <div class="table-wrap" style="margin-top:0;">
+                  <table>
+                    <tbody>
+                      <tr><td>청구건수</td><td id="performance-claim-count" class="skeleton skeleton-line" style="text-align:right;font-weight:700;width:40%;height:18px;"></td></tr>
+                      <tr><td>자동지급률</td><td id="performance-rate" class="skeleton skeleton-line" style="text-align:right;font-weight:700;width:30%;height:18px;"></td></tr>
+                      <tr><td>성과</td><td id="performance-value" class="skeleton skeleton-line" style="text-align:right;font-weight:700;width:48%;height:18px;"></td></tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              <button class="btn primary" id="performance-calc-btn" type="button">계산하기</button>
-              <div class="table-wrap" style="margin-top:0;">
-                <table>
-                  <tbody>
-                    <tr><td>청구건수</td><td id="performance-claim-count" style="text-align:right;font-weight:700;">182,400</td></tr>
-                    <tr><td>자동지급률</td><td id="performance-rate" style="text-align:right;font-weight:700;">58.4%</td></tr>
-                    <tr><td>성과</td><td id="performance-value" style="text-align:right;font-weight:700;">218,880,000원</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
             <div class="subsection">
               <article class="mini-card">
                 <div>
@@ -998,19 +1224,19 @@
                 </div>
                 <div class="mini-list">
                   <div class="mini-row">
-                    <span>대면</span>
+                    <span class="skeleton skeleton-line" style="width:42px;"></span>
                     <div class="mini-track"><div class="mini-fill" style="width: 42%;"></div></div>
-                    <strong>42%</strong>
+                    <strong class="skeleton skeleton-line" style="width:32px;"></strong>
                   </div>
                   <div class="mini-row">
-                    <span>비대면</span>
+                    <span class="skeleton skeleton-line" style="width:42px;"></span>
                     <div class="mini-track"><div class="mini-fill" style="width: 63%;"></div></div>
-                    <strong>63%</strong>
+                    <strong class="skeleton skeleton-line" style="width:32px;"></strong>
                   </div>
                   <div class="mini-row">
-                    <span>실손24</span>
+                    <span class="skeleton skeleton-line" style="width:42px;"></span>
                     <div class="mini-track"><div class="mini-fill" style="width: 51%;"></div></div>
-                    <strong>51%</strong>
+                    <strong class="skeleton skeleton-line" style="width:32px;"></strong>
                   </div>
                 </div>
               </article>
@@ -1021,24 +1247,17 @@
                   <p>자동지급 건 중 입원 / 통원 비율</p>
                 </div>
                 <div class="mini-pie-wrap">
-                  <svg class="mini-pie" viewBox="0 0 220 220" role="img" aria-label="진료구분별 비율 파이차트">
-                    <circle cx="110" cy="110" r="78" fill="#edf2f8"></circle>
-                    <path d="M110 110 L110 32 A78 78 0 1 1 45 153 Z" fill="#4d84ff"></path>
-                    <path d="M110 110 L45 153 A78 78 0 0 1 110 32 Z" fill="#1f9d67"></path>
-                    <circle cx="110" cy="110" r="44" fill="#ffffff"></circle>
-                    <text x="110" y="106" text-anchor="middle" font-size="18" font-weight="800" fill="#142033">72%</text>
-                    <text x="110" y="126" text-anchor="middle" font-size="12" fill="#66748a">통원</text>
-                  </svg>
+                  <div class="skeleton skeleton-block" style="width:140px;height:140px;border-radius:50%;margin:0 auto;"></div>
                   <div class="mini-list">
-                    <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
-                      <span style="width:12px;height:12px;border-radius:50%;background:#4d84ff;display:inline-block;"></span>
-                      <span>통원</span>
-                      <strong>72%</strong>
+                    <div class="mini-row">
+                      <span class="skeleton skeleton-line" style="width:12px;height:12px;border-radius:50%;"></span>
+                      <span class="skeleton skeleton-line" style="width:42px;"></span>
+                      <strong class="skeleton skeleton-line" style="width:32px;"></strong>
                     </div>
-                    <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
-                      <span style="width:12px;height:12px;border-radius:50%;background:#1f9d67;display:inline-block;"></span>
-                      <span>입원</span>
-                      <strong>28%</strong>
+                    <div class="mini-row">
+                      <span class="skeleton skeleton-line" style="width:12px;height:12px;border-radius:50%;"></span>
+                      <span class="skeleton skeleton-line" style="width:42px;"></span>
+                      <strong class="skeleton skeleton-line" style="width:32px;"></strong>
                     </div>
                   </div>
                 </div>
@@ -1051,61 +1270,55 @@
           <div class="panel-header">
             <div>
               <h3 class="panel-title">변화 요약</h3>
-              <p class="panel-sub">전월 대비 변화와 segment 변경 내역을 표 형태로 보여줍니다.</p>
+              <p class="panel-sub">전월 대비 변화와 factor 요약, 그리고 원본 segment 변경 내역을 함께 보여줍니다.</p>
             </div>
           </div>
           <div class="panel-body section-stack">
             <section class="callout">
               <div class="callout-title">
-                <h3>상태 요약</h3>
-              </div>
-              <ul class="callout-list">
-                <li class="callout-item"><span>자동지급률</span><span><span class="badge blue">증가 +0.7pp</span></span></li>
-                <li class="callout-item"><span>처리효율</span><span><span class="badge red">감소 -0.4pp</span></span></li>
-                <li class="callout-item"><span>자동지급 유형 상위 변화</span><span>A01 비중 확대</span></li>
-              </ul>
-            </section>
-
-            <section class="callout">
-              <div class="callout-title">
-                <h3>segment 변화</h3>
+                <h3>자동지급 유형 상위 변화</h3>
               </div>
               <div class="table-wrap segment-table" style="margin-top:0;">
                 <table>
                   <thead>
                     <tr>
-                      <th>변경 전 segment</th>
-                      <th>변경 후 segment</th>
-                      <th>건수</th>
-                      <th>비중</th>
-                      <th>변화 사유</th>
+                      <th>유형코드</th>
+                      <th>설명</th>
+                      <th>변화 정보</th>
+                      <th>전월 대비 변화량</th>
                     </tr>
                   </thead>
-                  <tbody id="segment-body">
-                    <tr>
-                      <td>S1. 소액 통원</td>
-                      <td>S2. 확정 통원</td>
-                      <td>248</td>
-                      <td>2.1%</td>
-                      <td>최근 3개월 진료패턴 안정화</td>
-                    </tr>
-                    <tr>
-                      <td>S3. 반복 입원</td>
-                      <td>S4. 제외 검토</td>
-                      <td>96</td>
-                      <td>0.8%</td>
-                      <td>필수 확인 항목 누락</td>
-                    </tr>
-                    <tr>
-                      <td>S2. 확정 통원</td>
-                      <td>S1. 소액 통원</td>
-                      <td>184</td>
-                      <td>1.6%</td>
-                      <td>청구금액 하향 및 단순화</td>
-                    </tr>
+                  <tbody id="auto-change-body">
+                    <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:48%;height:16px;"></div></td></tr>
+                    <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div></td></tr>
+                    <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:44%;height:16px;"></div></td></tr>
+                    <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:40%;height:16px;"></div></td></tr>
+                    <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:36%;height:16px;"></div></td></tr>
                   </tbody>
                 </table>
               </div>
+            </section>
+
+            <section class="callout">
+              <div class="callout-title">
+                <h3>factor 변화</h3>
+                <details class="tooltip-wrap">
+                  <summary class="tooltip-toggle" aria-label="factor 설명 보기">?</summary>
+                  <div class="tooltip-popover" role="tooltip">
+                    <h4>factor를 쉽게 읽는 법</h4>
+                    <p>여기서 segment 해석은 내부 코드 이동이 아니라 청구 factor의 전월 대비 변화로 읽습니다.</p>
+                    <ul>
+                      <li><strong>receipt_channel</strong>: 대면/비대면/실손24 같은 접수 경로가 바뀌었는지 봅니다.</li>
+                      <li><strong>treatment_type</strong>: 통원/입원 비율이 전월과 비교해 어떻게 달라졌는지 봅니다.</li>
+                      <li><strong>hospital_type</strong>: 의원/병원/종합병원/상급종합 같은 병원종별이 자동지급률에 어떤 영향을 줬는지 봅니다.</li>
+                      <li><strong>diagnosis_code_primary</strong>: 주상병코드별 자동지급률이 전월보다 올랐는지 내렸는지 봅니다.</li>
+                      <li><strong>변화 사유</strong>: 원문 사유는 참고용이고, 근거가 약하면 확인 필요를 붙입니다.</li>
+                    </ul>
+                  </div>
+                </details>
+              </div>
+              <p class="factor-intro">전월 대비 자동지급률을 변화시킨 factor를 점검합니다.</p>
+              <div class="factor-grid" id="factor-summary-grid"></div>
             </section>
           </div>
         </section>
@@ -1118,7 +1331,7 @@
             </div>
           </div>
           <div class="panel-body">
-            <div class="table-wrap">
+            <div class="table-wrap scrollable auto-type-scroll">
               <table>
                 <thead>
                   <tr>
@@ -1129,11 +1342,11 @@
                   </tr>
                 </thead>
                 <tbody id="auto-type-body">
-                  <tr><td>A01 비대면 소액 통원</td><td>1,740</td><td>36.1%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A02 입원 제증명료 단순건</td><td>880</td><td>18.3%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A03 통원 급여전용건</td><td>620</td><td>12.8%</td><td><span class="badge green">On</span></td></tr>
-                  <tr><td>A04 실손24 소액건</td><td>540</td><td>11.2%</td><td><span class="badge blue">On</span></td></tr>
-                  <tr><td>A05 검증된 반복 통원</td><td>320</td><td>6.7%</td><td><span class="badge amber">Off</span></td></tr>
+                  <tr><td><div class="skeleton skeleton-line" style="width:68%;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:44px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:40px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:54px;height:24px;border-radius:999px;"></div></td></tr>
+                  <tr><td><div class="skeleton skeleton-line" style="width:62%;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:44px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:40px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:54px;height:24px;border-radius:999px;"></div></td></tr>
+                  <tr><td><div class="skeleton skeleton-line" style="width:58%;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:44px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:40px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:54px;height:24px;border-radius:999px;"></div></td></tr>
+                  <tr><td><div class="skeleton skeleton-line" style="width:54%;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:44px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:40px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:54px;height:24px;border-radius:999px;"></div></td></tr>
+                  <tr><td><div class="skeleton skeleton-line" style="width:60%;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:44px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:40px;height:16px;"></div></td><td><div class="skeleton skeleton-line" style="width:54px;height:24px;border-radius:999px;"></div></td></tr>
                 </tbody>
               </table>
             </div>
@@ -1158,7 +1371,7 @@
             </div>
           </div>
           <div class="panel-body">
-            <div class="table-wrap">
+            <div class="table-wrap archive-report-scroll">
               <table>
                 <thead>
                   <tr>
@@ -1220,8 +1433,20 @@
   <script>
     const SUPABASE_URL = 'https://ejgruldmrfbtalplwowr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD';
-    const REPORT_SEND_API_URL = 'http://127.0.0.1:8787/api/send-monthly-report';
+    const REPORT_SEND_API_URL = location.protocol === 'file:'
+      ? 'http://127.0.0.1:8787/api/send-monthly-report'
+      : '/api/send-monthly-report';
     const REPORT_FILE_INDEX_PATH = '../data/private/report_file_index.json';
+    const REPORT_ARCHIVE_PATH = '../data/private/report_archive_fact.csv';
+    const REPORT_FILE_INDEX_SEED = [
+      {"snapshot_month":"2026-04","file_name":"monthly_auto_payment_report_2026-04.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2026-04.docx","updated_at":"2026-06-17T12:11:57Z","size_bytes":39115},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v6.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v6.docx","updated_at":"2026-06-16T12:48:34.397189Z","size_bytes":39115},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v5.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v5.docx","updated_at":"2026-06-16T12:42:58.918312Z","size_bytes":39078},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v4.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v4.docx","updated_at":"2026-06-16T12:37:55.320482Z","size_bytes":39076},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_v3.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_v3.docx","updated_at":"2026-06-16T12:29:52.505884Z","size_bytes":38769},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12_template_v2.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12_template_v2.docx","updated_at":"2026-06-16T12:15:13.156883Z","size_bytes":39375},
+      {"snapshot_month":"2025-12","file_name":"monthly_auto_payment_report_2025-12.docx","file_path":"/Users/jyun/Documents/AI Agent 기획/reports/monthly_auto_payment_report_2025-12.docx","updated_at":"2026-06-16T07:51:00.789567Z","size_bytes":38851}
+    ];
 
     const navItems = document.querySelectorAll('.nav-item[data-view]');
     const views = {
@@ -1234,10 +1459,12 @@
       latestSnapshot: null,
       previousSnapshot: null,
       allClaims: [],
+      autoPaymentTypes: [],
       reportArchives: [],
       reportFileIndex: [],
       subscriptions: [],
       performanceUnitCost: 1200,
+      isLoading: true,
       archiveSendState: {
         selectedMonth: '',
         isSending: false,
@@ -1332,8 +1559,11 @@
 
     function toFileHref(filePath) {
       if (!filePath) return '';
-      if (String(filePath).startsWith('file://')) return filePath;
-      return `file://${String(filePath).replace(/^file:\/\//, '')}`;
+      const value = String(filePath);
+      if (value.startsWith('file://') || value.startsWith('http://') || value.startsWith('https://')) {
+        return value;
+      }
+      return new URL(value, window.location.href).href;
     }
 
     function getActiveSubscriptionCount() {
@@ -1366,17 +1596,15 @@
     function syncArchiveMonthOptions() {
       const select = controlEls.archiveMonth;
       if (!select) return;
-      const fileIndexLoaded = state.reportFileIndex.length > 0;
-      const archiveMonths = state.reportArchives
-        .filter((row) => !fileIndexLoaded || hasAvailableReportFile(row.snapshot_month))
-        .map((row) => row.snapshot_month)
-        .filter(Boolean)
-        .sort()
-        .reverse();
+      const archiveMonths = [...new Set(
+        (Array.isArray(state.snapshots) ? state.snapshots : [])
+          .map((row) => row.snapshot_month)
+          .filter(Boolean)
+      )].sort().reverse();
       const current = select.value || state.archiveSendState.selectedMonth || state.latestSnapshot?.snapshot_month || '';
       select.innerHTML = archiveMonths.length
         ? archiveMonths.map((month) => `<option value="${month}">${month}</option>`).join('')
-        : '<option value="">발송 가능한 리포트가 없습니다</option>';
+        : '<option value="">선택 가능한 기준월이 없습니다</option>';
       const nextValue = archiveMonths.includes(current) ? current : (archiveMonths[0] || '');
       select.value = nextValue;
       state.archiveSendState.selectedMonth = nextValue;
@@ -1393,8 +1621,7 @@
       const select = controlEls.archiveMonth;
       const button = controlEls.archiveSendButton;
       const selectedMonth = select?.value || state.archiveSendState.selectedMonth || '';
-      const hasFile = selectedMonth ? hasAvailableReportFile(selectedMonth) : false;
-      if (button) button.disabled = state.archiveSendState.isSending || !selectedMonth || !hasFile;
+      if (button) button.disabled = state.archiveSendState.isSending || !selectedMonth;
     }
 
     async function handleArchiveSendTest() {
@@ -1402,11 +1629,6 @@
       const selectedMonth = select?.value || state.archiveSendState.selectedMonth || state.latestSnapshot?.snapshot_month || '';
       if (!selectedMonth) {
         setArchiveSendStatus('발송 가능한 기준월이 없습니다.', 'amber');
-        return;
-      }
-      if (!hasAvailableReportFile(selectedMonth)) {
-        setArchiveSendStatus(`${selectedMonth} 기준 리포트 파일이 없어 발송테스트를 실행할 수 없습니다.`, 'amber');
-        updateArchiveSendControls();
         return;
       }
 
@@ -1467,8 +1689,6 @@
       }
     }
 
-    const SUBSCRIPTION_CSV_PATH = '../data/private/report_subscription_accounts.csv';
-
     function parseCsvLine(line) {
       const cells = [];
       let current = '';
@@ -1512,10 +1732,10 @@
     async function loadReportFileIndex() {
       try {
         const response = await fetch(REPORT_FILE_INDEX_PATH);
-        if (!response.ok) return [];
+        if (!response.ok) return REPORT_FILE_INDEX_SEED.slice();
         const payload = await response.json();
         const rows = Array.isArray(payload) ? payload : (payload?.reports || payload?.files || []);
-        return rows
+        const normalized = rows
           .filter((row) => row && row.snapshot_month && row.file_name && row.file_path)
           .slice()
           .sort((a, b) => {
@@ -1523,31 +1743,60 @@
             if (monthCompare !== 0) return monthCompare;
             return String(b.updated_at || b.mtime || '').localeCompare(String(a.updated_at || a.mtime || ''));
           });
+        return normalized.length ? normalized : REPORT_FILE_INDEX_SEED.slice();
       } catch (error) {
         console.warn('Falling back to empty report file index', error);
-        return [];
+        return REPORT_FILE_INDEX_SEED.slice();
       }
     }
 
     async function loadSubscriptionAccounts() {
       try {
-        const response = await fetch(SUBSCRIPTION_CSV_PATH);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const text = await response.text();
-        return parseCsv(text);
+        const rows = await supaFetch('/rest/v1/report_subscription_account_public', '?select=subscription_id,recipient_name,masked_email,department,active_flag,created_at,updated_at&order=created_at.desc');
+        return Array.isArray(rows) ? rows : [];
       } catch (error) {
-        console.warn('Falling back to embedded subscription data', error);
-        return [
-          {
-            recipient_name: '운영관리자',
-            recipient_email: 'ssongjiuoon@naver.com',
-            department: '운영기획',
-            active_flag: 'Y',
-            created_at: '2026-06-01T09:00:00Z',
-            updated_at: '2026-06-01T09:00:00Z',
-          },
-        ];
+        console.warn('Supabase public subscription fetch failed', error);
+        return [];
       }
+    }
+
+    async function loadReportArchives() {
+      const merged = new Map();
+      const mergeRows = (rows) => {
+        rows.forEach((row) => {
+          if (!row || !row.snapshot_month) return;
+          const snapshotMonth = String(row.snapshot_month).trim();
+          if (!snapshotMonth) return;
+          const existing = merged.get(snapshotMonth);
+          if (!existing) {
+            merged.set(snapshotMonth, row);
+            return;
+          }
+          const existingStamp = String(existing.updated_at || existing.sent_at || existing.generated_at || '');
+          const nextStamp = String(row.updated_at || row.sent_at || row.generated_at || '');
+          if (nextStamp.localeCompare(existingStamp) >= 0) {
+            merged.set(snapshotMonth, { ...existing, ...row });
+          }
+        });
+      };
+
+      try {
+        const response = await fetch(REPORT_ARCHIVE_PATH);
+        if (response.ok) {
+          mergeRows(parseCsv(await response.text()));
+        }
+      } catch (error) {
+        console.warn('Falling back to embedded report archive data', error);
+      }
+
+      try {
+        const remoteRows = await supaFetch('/rest/v1/report_archive_fact', '?select=*&order=snapshot_month.desc');
+        mergeRows(Array.isArray(remoteRows) ? remoteRows : []);
+      } catch (error) {
+        console.warn('Supabase report archive fetch failed', error);
+      }
+
+      return [...merged.values()].sort((a, b) => String(b.snapshot_month).localeCompare(String(a.snapshot_month)));
     }
 
     function getSelectedContext() {
@@ -1633,9 +1882,16 @@
       const valueEl = card.querySelector('.kpi-value');
       const descEl = card.querySelector('.kpi-desc');
       const badgeEl = card.querySelector('.badge');
-      if (valueEl) valueEl.textContent = value;
-      if (descEl) descEl.innerHTML = desc;
+      if (valueEl) {
+        valueEl.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
+        valueEl.textContent = value;
+      }
+      if (descEl) {
+        descEl.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
+        descEl.innerHTML = desc;
+      }
       if (badgeEl) {
+        badgeEl.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
         badgeEl.textContent = badgeText;
         badgeEl.className = `badge ${badgeClass}`;
       }
@@ -1644,6 +1900,7 @@
     function renderPerformanceCalc(snapshot) {
       if (!snapshot) return;
       if (controlEls.performanceMonth) {
+        controlEls.performanceMonth.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
         controlEls.performanceMonth.textContent = snapshot.snapshot_month;
       }
       if (controlEls.performanceUnit) {
@@ -1654,19 +1911,37 @@
       const unitCost = Number(state.performanceUnitCost ?? 1200);
       const performance = claimCount * unitCost;
       if (controlEls.performanceClaimCount) {
+        controlEls.performanceClaimCount.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
         controlEls.performanceClaimCount.textContent = fmtInt(claimCount);
       }
       if (controlEls.performanceRate) {
+        controlEls.performanceRate.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
         controlEls.performanceRate.textContent = pct(autoRate, 1);
       }
       if (controlEls.performanceValue) {
+        controlEls.performanceValue.classList.remove('skeleton', 'skeleton-line', 'skeleton-block', 'skeleton-hidden');
         controlEls.performanceValue.textContent = `${fmtInt(performance)}원`;
       }
     }
 
     function renderTrendChart(snapshots) {
       const chartShell = document.querySelector('.chart-shell');
-      if (!chartShell || !snapshots.length) return;
+      if (!chartShell || !snapshots.length) {
+        if (chartShell) {
+          chartShell.innerHTML = `
+            <div class="chart-topline">
+              <span>좌측 축: 청구건수</span>
+              <span>우측 축: 자동지급률</span>
+            </div>
+            <div class="skeleton skeleton-block" style="flex:1; min-height: 300px; border:1px solid #dfe8f3; border-radius: 18px;"></div>
+            <div class="chart-legend" aria-hidden="true">
+              <span class="chart-legend-item skeleton skeleton-line" style="width: 120px;"></span>
+              <span class="chart-legend-item skeleton skeleton-line" style="width: 120px;"></span>
+            </div>
+          `;
+        }
+        return;
+      }
       const series = snapshots.slice();
       const counts = series.map((row) => Number(row.total_claim_count));
       const rates = series.map((row) => Number(row.auto_payment_rate));
@@ -1683,6 +1958,7 @@
       const chartBaseY = topPad + plotHeight;
       const gap = plotWidth / series.length;
       const barWidth = Math.min(66, Math.max(28, gap * 0.58));
+      const showAllLabels = series.length <= 12;
       const xForIndex = (index) => leftPad + gap * index + (gap - barWidth) / 2;
       const yForCount = (count) => chartBaseY - (count / maxCount) * plotHeight;
       const yForRate = (rate) => chartBaseY - (rate / maxRate) * plotHeight;
@@ -1690,7 +1966,7 @@
         .map((row, index) => `${xForIndex(index) + barWidth / 2},${yForRate(Number(row.auto_payment_rate))}`)
         .join(' ');
       const countTicks = [0, 500, 1000, 1500, 2000];
-      const rateTicks = [0, 20, 40, 60, 80];
+      const rateTicks = [0, 20, 40, 60];
 
       chartShell.innerHTML = `
         <div class="chart-topline">
@@ -1703,14 +1979,14 @@
             const y = chartBaseY - (tick / maxCount) * plotHeight;
             return `<line x1="${leftPad}" y1="${y}" x2="${chartWidth - rightPad}" y2="${y}" stroke="#e6edf5" stroke-width="1"/>`;
           }).join('')}
-          <g fill="#66748a" font-size="12" font-family="inherit">
+          <g fill="#66748a" font-size="12" font-family="inherit" dominant-baseline="middle">
             ${countTicks.map((tick) => {
-              const y = chartBaseY - (tick / maxCount) * plotHeight + 4;
-              return `<text x="14" y="${y}">${fmtInt(tick)}</text>`;
+              const y = chartBaseY - (tick / maxCount) * plotHeight;
+              return `<text x="${leftPad - 16}" y="${y}" text-anchor="end">${fmtInt(tick)}</text>`;
             }).join('')}
             ${rateTicks.map((tick) => {
-              const y = chartBaseY - (tick / maxRate) * plotHeight + 4;
-              return `<text x="${chartWidth - 12}" y="${y}" text-anchor="end">${tick}%</text>`;
+              const y = chartBaseY - (tick / maxRate) * plotHeight;
+              return `<text x="${chartWidth - rightPad + 16}" y="${y}" text-anchor="start">${tick}%</text>`;
             }).join('')}
           </g>
           ${series.map((row, index) => {
@@ -1728,7 +2004,8 @@
           <g fill="#415168" font-size="12" font-family="inherit">
             ${series.map((row, index) => {
               const x = xForIndex(index) + 2;
-              return `<text x="${x}" y="${chartHeight - 14}">${series.length > 8 && index % 2 === 1 ? '' : row.snapshot_month}</text>`;
+              const label = showAllLabels || index % 2 === 0 ? row.snapshot_month : '';
+              return `<text x="${x}" y="${chartHeight - 14}">${label}</text>`;
             }).join('')}
           </g>
         </svg>
@@ -1742,6 +2019,26 @@
     function renderChannelCard(claimRows) {
       const card = document.querySelectorAll('.mini-card')[0];
       if (!card) return;
+      if (state.isLoading || !Array.isArray(claimRows) || !claimRows.length) {
+        card.querySelector('.mini-list').innerHTML = `
+          <div class="mini-row">
+            <span class="skeleton skeleton-line" style="width:48px;"></span>
+            <div class="skeleton skeleton-line" style="height:9px;"></div>
+            <strong class="skeleton skeleton-line" style="width:36px;"></strong>
+          </div>
+          <div class="mini-row">
+            <span class="skeleton skeleton-line" style="width:48px;"></span>
+            <div class="skeleton skeleton-line" style="height:9px;"></div>
+            <strong class="skeleton skeleton-line" style="width:36px;"></strong>
+          </div>
+          <div class="mini-row">
+            <span class="skeleton skeleton-line" style="width:48px;"></span>
+            <div class="skeleton skeleton-line" style="height:9px;"></div>
+            <strong class="skeleton skeleton-line" style="width:36px;"></strong>
+          </div>
+        `;
+        return;
+      }
       const rows = Array.isArray(claimRows) ? claimRows : [];
       const totalByChannel = groupCount(rows, (row) => row.receipt_channel);
       const autoByChannel = groupCount(rows, (row) => row.receipt_channel, (row) => row.auto_payment_decision === 'AUTO_PAY');
@@ -1764,6 +2061,24 @@
     function renderTreatmentCard(claimRows) {
       const card = document.querySelectorAll('.mini-card')[1];
       if (!card) return;
+      if (state.isLoading || !Array.isArray(claimRows) || !claimRows.length) {
+        card.querySelector('.mini-pie-wrap').innerHTML = `
+          <div class="skeleton skeleton-block" style="width:140px;height:140px;border-radius:50%;margin:0 auto;"></div>
+          <div class="mini-list">
+            <div class="mini-row">
+              <span class="skeleton skeleton-line" style="width:12px;height:12px;border-radius:50%;"></span>
+              <span class="skeleton skeleton-line" style="width:48px;"></span>
+              <strong class="skeleton skeleton-line" style="width:36px;"></strong>
+            </div>
+            <div class="mini-row">
+              <span class="skeleton skeleton-line" style="width:12px;height:12px;border-radius:50%;"></span>
+              <span class="skeleton skeleton-line" style="width:48px;"></span>
+              <strong class="skeleton skeleton-line" style="width:36px;"></strong>
+            </div>
+          </div>
+        `;
+        return;
+      }
       const rows = Array.isArray(claimRows) ? claimRows : [];
       const autoRows = rows.filter((row) => row.auto_payment_decision === 'AUTO_PAY');
       const counts = groupCount(autoRows, (row) => row.treatment_type);
@@ -1796,12 +2111,12 @@
       `;
       card.querySelector('.mini-pie-wrap').innerHTML = `${svg}
         <div class="mini-list">
-          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+          <div class="mini-row">
             <span style="width:12px;height:12px;border-radius:50%;background:#4d84ff;display:inline-block;"></span>
             <span>통원</span>
             <strong>${outpatientPct}%</strong>
           </div>
-          <div class="mini-row" style="grid-template-columns: 14px 1fr auto;">
+          <div class="mini-row">
             <span style="width:12px;height:12px;border-radius:50%;background:#1f9d67;display:inline-block;"></span>
             <span>입원</span>
             <strong>${inpatientPct}%</strong>
@@ -1810,8 +2125,196 @@
       `;
     }
 
-    function renderChangeSummary(latest, previous, claimRows) {
-      const rows = Array.isArray(claimRows) ? claimRows : [];
+    function renderChangeSummary(latest, previous, claimRows, previousClaimRows) {
+      const renderLoading = () => {
+        const factorGrid = document.getElementById('factor-summary-grid');
+        if (factorGrid) {
+          factorGrid.innerHTML = `
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+            <article class="factor-card"><div class="skeleton skeleton-line" style="width:42%;height:16px;"></div><div class="skeleton skeleton-line" style="width:88%;height:14px;"></div><div class="skeleton skeleton-block" style="height:120px;border-radius:12px;"></div></article>
+          `;
+        }
+        const segmentBody = document.getElementById('segment-body');
+        if (segmentBody) {
+          segmentBody.innerHTML = `
+            <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:32%;height:16px;"></div></td></tr>
+            <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:48%;height:16px;"></div></td></tr>
+            <tr><td colspan="7"><div class="skeleton skeleton-line" style="width:40%;height:16px;"></div></td></tr>
+          `;
+        }
+        const autoChangeBody = document.getElementById('auto-change-body');
+        if (autoChangeBody) {
+          autoChangeBody.innerHTML = `
+            <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:44%;height:16px;"></div></td></tr>
+            <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:36%;height:16px;"></div></td></tr>
+            <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:40%;height:16px;"></div></td></tr>
+            <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:34%;height:16px;"></div></td></tr>
+            <tr><td colspan="4"><div class="skeleton skeleton-line" style="width:30%;height:16px;"></div></td></tr>
+          `;
+        }
+      };
+
+      if (state.isLoading || !latest) {
+        renderLoading();
+        return;
+      }
+
+      const currentRows = Array.isArray(claimRows) ? claimRows : [];
+      const previousRows = Array.isArray(previousClaimRows)
+        ? previousClaimRows
+        : getClaimsForMonth(previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || ''));
+
+      const factorConfigs = [
+        { key: 'receipt_channel', title: '접수채널', help: '대면/비대면/실손24처럼 청구가 들어온 경로' },
+        { key: 'treatment_type', title: '진료구분', help: '통원/입원처럼 치료 형태가 어떻게 나뉘었는지' },
+        { key: 'hospital_type', title: '병원종별', help: '의원/병원/종합병원/상급종합처럼 병원 규모가 어떻게 달라졌는지' },
+        { key: 'diagnosis_code_primary', title: '주상병코드', help: '질병 코드별로 자동지급률이 어떻게 달라졌는지' },
+      ];
+
+      const factorReasonHelp = {
+        '변화 없음': {
+          summary: '전월과 같은 구조라서 추가 해석이 거의 필요하지 않은 상태예요.',
+          bullets: [
+            'factor 비율이 크게 바뀌지 않았습니다.',
+            '자동지급률 변화의 직접 원인이라고 보기 어렵습니다.',
+          ],
+        },
+        '표준 심사 유지': {
+          summary: '원본 기록상 같은 흐름을 유지했다는 뜻이지만, 실제 해석은 factor 요약을 먼저 봐야 합니다.',
+          bullets: [
+            '이 문구만으로 판단을 끝내지 않습니다.',
+            '어떤 factor가 바뀌었는지 위 요약을 같이 봅니다.',
+          ],
+        },
+        '표준 심사 세그먼트 조정': {
+          summary: '원본 메모상 분류를 다시 맞췄다는 뜻이고, 실제로는 어떤 factor가 바뀌었는지 확인해야 합니다.',
+          bullets: [
+            '청구 특성 변화가 있었는지 먼저 확인합니다.',
+            '자동지급률 변화는 위 factor 표를 우선으로 봅니다.',
+          ],
+        },
+        '제외유형 매칭으로 인심사 세그먼트 이동': {
+          summary: '원본 메모상 사람 확인이 필요하다고 본 기록입니다. 다만 근거는 factor 변화로 같이 봅니다.',
+          bullets: [
+            '제외 규칙에 걸린 것인지 확인합니다.',
+            '원문 사유만으로 단정하지 않습니다.',
+          ],
+        },
+        '인심사 유지': {
+          summary: '계속 사람 확인이 필요한 상태로 본 기록입니다. 실제 원인은 factor 변화와 함께 봐야 합니다.',
+          bullets: [
+            '자동지급 후보로 강하게 보지 않습니다.',
+            '원문 메모는 참고용입니다.',
+          ],
+        },
+        '청구특성 변화에 따라 세그먼트 조정': {
+          summary: '청구 특성 변화가 있어 분류를 조정한 기록이지만, 어떤 factor가 바뀌었는지 우선 봐야 합니다.',
+          bullets: [
+            'treatment_type, hospital_type, diagnosis_code_primary 같은 factor를 확인합니다.',
+            '자동지급률 변화는 수치로 우선 해석합니다.',
+          ],
+        },
+      };
+
+      const factorGrid = document.getElementById('factor-summary-grid');
+      const normalizeFactorValue = (value) => String(value ?? '').trim() || '-';
+      const groupRateRows = (rows, key) => {
+        const totalByValue = groupCount(rows, (row) => normalizeFactorValue(row[key]));
+        const autoByValue = groupCount(rows, (row) => normalizeFactorValue(row[key]), (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const values = new Set([...totalByValue.keys(), ...autoByValue.keys()]);
+        return [...values].map((value) => {
+          const total = totalByValue.get(value) || 0;
+          const auto = autoByValue.get(value) || 0;
+          return {
+            value,
+            total,
+            auto,
+            rate: total ? (auto / total) * 100 : 0,
+          };
+        }).filter((item) => item.total >= 20);
+      };
+
+      const factorSummary = factorConfigs.map((factor) => {
+        const current = groupRateRows(currentRows, factor.key);
+        const previous = groupRateRows(previousRows, factor.key);
+        const previousMap = new Map(previous.map((row) => [row.value, row]));
+        const rows = current.map((row) => {
+          const prev = previousMap.get(row.value);
+          const previousRate = prev?.rate ?? 0;
+          return {
+            ...row,
+            previousRate,
+            delta: row.rate - previousRate,
+          };
+        }).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+        const topRows = rows.slice(0, 3);
+        const lead = topRows[0] || null;
+        const summary = lead
+          ? (Math.abs(lead.delta) >= 5
+            ? `${lead.value}의 자동지급률이 ${lead.previousRate.toFixed(1)}% → ${lead.rate.toFixed(1)}%로 ${lead.delta >= 0 ? '상승' : '하락'}했습니다.`
+            : `가장 큰 변화는 ${lead.value}의 ${lead.delta >= 0 ? '상승' : '하락'} ${Math.abs(lead.delta).toFixed(1)}pp입니다. 확인 필요 수준입니다.`)
+          : '비교할 충분한 데이터가 없습니다. 확인 필요.';
+        return {
+          ...factor,
+          rows: topRows,
+          lead,
+          summary,
+        };
+      });
+
+      if (factorGrid) {
+        factorGrid.innerHTML = factorSummary.map((factor) => {
+          const badgeClass = factor.lead && Math.abs(factor.lead.delta) >= 5
+            ? (factor.lead.delta >= 0 ? 'green' : 'red')
+            : 'amber';
+          const badgeText = factor.lead
+            ? `${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp`
+            : 'N/A';
+          const rowsHtml = factor.rows.length
+            ? factor.rows.map((item) => {
+              const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
+              const direction = item.delta > 0 ? '상승' : item.delta < 0 ? '하락' : '변화 없음';
+              return `
+                <tr>
+                  <td class="factor-value">${item.value}</td>
+                  <td>${item.previousRate.toFixed(1)}%</td>
+                  <td>${item.rate.toFixed(1)}%</td>
+                  <td class="factor-delta"><span class="badge ${deltaClass}">${direction} ${item.delta >= 0 ? '+' : ''}${item.delta.toFixed(1)}pp</span></td>
+                </tr>`;
+            }).join('')
+            : `<tr><td colspan="4" class="empty-row" style="padding:10px 8px;">비교할 충분한 데이터가 없습니다.</td></tr>`;
+          const note = factor.lead
+            ? `${factor.lead.value} 기준 ${factor.lead.previousRate.toFixed(1)}% → ${factor.lead.rate.toFixed(1)}% (${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp)`
+            : '충분한 데이터가 없어 요약할 수 없습니다.';
+          return `
+            <article class="factor-card">
+              <div class="factor-card-head">
+                <div>
+                  <h4>${factor.title}</h4>
+                </div>
+                <span class="badge ${badgeClass}">${badgeText}</span>
+              </div>
+              <div class="factor-card-note">${factor.summary}</div>
+              <table class="factor-table">
+                <thead>
+                  <tr>
+                    <th>값</th>
+                    <th>전월</th>
+                    <th>이번 달</th>
+                    <th>변화</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+              <div class="factor-card-note">${note}</div>
+            </article>`;
+        }).join('');
+      }
+
       const badges = document.querySelectorAll('.change-panel .callout .badge');
       if (badges[0]) {
         badges[0].textContent = latest.status_label;
@@ -1830,62 +2333,139 @@
         stateItems[1].querySelector('span:last-child').innerHTML = `<span class="badge ${badgeClass}">${delta >= 0 ? '증가 ' : '감소 '}${pp(delta)}</span>`;
       }
       if (stateItems[2]) {
-        const topTypeCounts = groupCount(rows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
-        const topType = [...topTypeCounts.entries()].sort((a, b) => b[1] - a[1])[0];
-        stateItems[2].querySelector('span:last-child').textContent = topType ? `${topType[0]} 비중 확대` : '분석 중';
+        stateItems[2].querySelector('span:last-child').textContent = '전월 대비 상위 변화';
       }
 
-      const segRows = document.querySelectorAll('#segment-body tr');
       const changes = groupCount(
-        rows,
-        (row) => `${row.segment_before}→${row.segment_after}｜${row.segment_change_reason}`,
+        currentRows,
+        (row) => `${row.segment_code || ''}｜${row.segment_name || ''}｜${row.segment_before || ''}→${row.segment_after || ''}｜${row.segment_change_reason || ''}`,
         (row) => row.segment_change_flag === 'Y'
       );
-      const sortedChanges = [...changes.entries()].sort((a, b) => b[1] - a[1]).slice(0, segRows.length);
+      const sortedChanges = [...changes.entries()].sort((a, b) => b[1] - a[1]);
+      const segmentBody = document.getElementById('segment-body');
       if (!sortedChanges.length) {
-        const body = document.getElementById('segment-body');
-        if (body) body.innerHTML = `<tr><td colspan="5" class="empty-row">segment 변화가 없는 월입니다.</td></tr>`;
-        return;
+        if (segmentBody) {
+          segmentBody.innerHTML = `<tr><td colspan="7" class="empty-row">원본 segment 이력은 없지만 factor 변화는 위에서 확인할 수 있습니다.</td></tr>`;
+        }
+      } else if (segmentBody) {
+        segmentBody.innerHTML = sortedChanges.map(([key, count]) => {
+          const [beforeCode, beforeName, beforeAfter, reason] = key.split('｜');
+          const [beforeSeg, afterSeg] = String(beforeAfter || '').split('→');
+          const reasonHelp = factorReasonHelp[reason] || {
+            summary: '이 사유는 원문 메모입니다. 실제 해석은 위 factor 변화 요약을 먼저 봐야 합니다.',
+            bullets: [
+              `변경 전: ${beforeSeg || '-'}`,
+              `변경 후: ${afterSeg || '-'}`,
+            ],
+          };
+          return `
+            <tr>
+              <td>${beforeCode || '-'}</td>
+              <td>${beforeName || '-'}</td>
+              <td>${beforeSeg || '-'}</td>
+              <td>${afterSeg || '-'}</td>
+              <td>${fmtInt(count)}</td>
+              <td>${pct((count / currentRows.length) * 100, 1)}</td>
+              <td>
+                <div class="reason-cell">
+                  <span class="reason-text">${reason}</span>
+                  <details class="reason-tooltip">
+                    <summary class="reason-toggle" aria-label="원문 사유 설명 보기">?</summary>
+                    <div class="tooltip-popover reason-popover" role="tooltip">
+                      <h4>원문 사유</h4>
+                      <p>${reasonHelp.summary}</p>
+                      <ul>
+                        ${reasonHelp.bullets.map((item) => `<li>${item}</li>`).join('')}
+                      </ul>
+                    </div>
+                  </details>
+                </div>
+              </td>
+            </tr>`;
+        }).join('');
       }
-      sortedChanges.forEach(([key, count], index) => {
-        const [beforeAfter, reason] = key.split('｜');
-        const [beforeSeg, afterSeg] = beforeAfter.split('→');
-        const row = segRows[index];
-        if (!row) return;
-        const cells = row.querySelectorAll('td');
-        if (cells[0]) cells[0].textContent = beforeSeg;
-        if (cells[1]) cells[1].textContent = afterSeg;
-        if (cells[2]) cells[2].textContent = fmtInt(count);
-        if (cells[3]) cells[3].textContent = pct((count / rows.length) * 100, 1);
-        if (cells[4]) cells[4].textContent = reason;
-      });
+
+      const autoChangeBody = document.getElementById('auto-change-body');
+      if (autoChangeBody) {
+        const prevMonth = previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || '');
+        const prevRows = getClaimsForMonth(prevMonth);
+        const currentCounts = groupCount(currentRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const previousCounts = groupCount(prevRows, (row) => row.auto_payment_type_code, (row) => row.auto_payment_decision === 'AUTO_PAY');
+        const codes = new Set([...currentCounts.keys(), ...previousCounts.keys()]);
+        const typeLabels = {
+          A01: '비대면 소액 통원',
+          A02: '입원 제증명료 단순건',
+          A03: '통원 급여전용건',
+          A04: '실손24 소액건',
+          A05: '검증된 반복 통원',
+          A06: '단순 반복 청구',
+          A07: '경증 비급여 단순건',
+          A08: '자동확정 가능건',
+        };
+        const deltas = [...codes].map((code) => {
+          const current = currentCounts.get(code) || 0;
+          const prevCount = previousCounts.get(code) || 0;
+          return {
+            code,
+            label: typeLabels[code] ?? code,
+            current,
+            prevCount,
+            delta: current - prevCount,
+          };
+        }).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)).slice(0, 5);
+
+        if (!deltas.length) {
+          autoChangeBody.innerHTML = `<tr><td colspan="4" class="empty-row">자동지급 유형 변화 데이터가 없습니다.</td></tr>`;
+        } else {
+          autoChangeBody.innerHTML = deltas.map((item) => {
+            const deltaText = `${item.delta >= 0 ? '+' : ''}${fmtInt(item.delta)}건`;
+            const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
+            const changeInfo = item.delta > 0 ? '증가' : item.delta < 0 ? '감소' : '변동 없음';
+            return `<tr>
+              <td>${item.code}</td>
+              <td>${item.label}</td>
+              <td>${changeInfo}</td>
+              <td><span class="badge ${deltaClass}">${deltaText}</span></td>
+            </tr>`;
+          }).join('');
+        }
+      }
     }
 
     function renderAutoPaymentTable(claimRows) {
       const tbody = document.getElementById('auto-type-body');
       if (!tbody) return;
+      if (state.isLoading || !Array.isArray(claimRows) || !claimRows.length) {
+        tbody.innerHTML = `
+          <tr><td><div class="skeleton skeleton-line" style="width:60%;"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line" style="width:54px;"></div></td></tr>
+          <tr><td><div class="skeleton skeleton-line" style="width:48%;"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line" style="width:54px;"></div></td></tr>
+          <tr><td><div class="skeleton skeleton-line" style="width:52%;"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line" style="width:54px;"></div></td></tr>
+          <tr><td><div class="skeleton skeleton-line" style="width:44%;"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line" style="width:54px;"></div></td></tr>
+          <tr><td><div class="skeleton skeleton-line" style="width:56%;"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line"></div></td><td><div class="skeleton skeleton-line" style="width:54px;"></div></td></tr>
+        `;
+        return;
+      }
       const rows = Array.isArray(claimRows) ? claimRows : [];
       const autoRows = rows.filter((row) => row.auto_payment_decision === 'AUTO_PAY');
+      const typeMeta = new Map(
+        (Array.isArray(state.autoPaymentTypes) ? state.autoPaymentTypes : []).map((row) => [
+          String(row.type_code || '').trim(),
+          row,
+        ])
+      );
       const counts = groupCount(autoRows, (row) => row.auto_payment_type_code);
-      const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
       const total = autoRows.length || 1;
       if (!sorted.length) {
         tbody.innerHTML = `<tr><td colspan="4" class="empty-row">자동지급 유형 데이터가 없습니다.</td></tr>`;
         return;
       }
       tbody.innerHTML = sorted.map(([code, count], index) => {
-        const labels = {
-          A01: 'A01 비대면 소액 통원',
-          A02: 'A02 입원 제증명료 단순건',
-          A03: 'A03 통원 급여전용건',
-          A04: 'A04 실손24 소액건',
-          A05: 'A05 검증된 반복 통원',
-          A06: 'A06 단순 반복 청구',
-          A07: 'A07 경증 비급여 단순건',
-          A08: 'A08 자동확정 가능건',
-        };
-        const badgeClass = index < 3 ? 'green' : index < 4 ? 'blue' : 'amber';
-        return `<tr><td>${labels[code] ?? code}</td><td>${fmtInt(count)}</td><td>${pct((count / total) * 100, 1)}</td><td><span class="badge ${badgeClass}">On</span></td></tr>`;
+        const meta = typeMeta.get(String(code || '').trim()) || {};
+        const isActive = String(meta.active_flag || '').trim().toUpperCase() === 'Y';
+        const badgeClass = isActive ? 'blue' : 'gray';
+        const typeName = meta.type_name || code;
+        return `<tr><td>${typeName}</td><td>${fmtInt(count)}</td><td>${pct((count / total) * 100, 1)}</td><td><span class="badge ${badgeClass}">${isActive ? 'On' : 'Off'}</span></td></tr>`;
       }).join('');
     }
 
@@ -1893,7 +2473,6 @@
       const query = normalizeText(options.query ?? '');
       const status = options.status ?? '전체';
       const previewOnly = Boolean(options.previewOnly);
-      const fileIndexLoaded = state.reportFileIndex.length > 0;
       const filteredArchives = archives.filter((row) => {
         const matchesStatus = status === '전체' || String(row.report_status || '').trim() === status;
         const haystack = normalizeText([
@@ -1904,12 +2483,12 @@
           row.notes,
         ].join(' '));
         const matchesQuery = !query || haystack.includes(query);
-        const hasFile = !fileIndexLoaded || hasAvailableReportFile(row.snapshot_month);
-        return matchesStatus && matchesQuery && hasFile;
+        return matchesStatus && matchesQuery;
       });
       const filteredSubscriptions = subscriptions.filter((row) => {
         const haystack = normalizeText([
           row.recipient_name,
+          row.masked_email,
           row.recipient_email,
           row.department,
           row.active_flag,
@@ -1922,43 +2501,59 @@
       }
 
       const archiveRows = document.getElementById('archive-report-body');
-      if (archiveRows) {
-        const sorted = filteredArchives.slice().sort((a, b) => String(b.snapshot_month).localeCompare(String(a.snapshot_month)));
-        if (!sorted.length) {
-          archiveRows.innerHTML = `<tr><td colspan="5" class="empty-row">조건에 맞는 리포트가 없습니다.</td></tr>`;
-        } else {
-          archiveRows.innerHTML = sorted.map((row) => {
-            const statusLabel = row.report_status || (row.sent_flag === 'Y' ? '발송됨' : row.generated_flag === 'Y' ? '생성됨' : '미발송');
-            const badgeClass = statusLabel === '발송됨' ? 'green' : statusLabel === '생성됨' ? 'blue' : 'amber';
-            const fileName = resolveLatestReportFileName(row.snapshot_month, row.file_name);
-            const filePath = resolveLatestReportFilePath(row.snapshot_month, row.file_path);
-            const fileUrl = toFileHref(filePath) || new URL(`../reports/${fileName}`, window.location.href).href;
-            return `
-              <tr>
-                <td>${row.snapshot_month}</td>
-                <td>${row.generated_at?.slice(0, 10) ?? row.snapshot_date ?? '-'}</td>
-                <td>${row.sent_at?.slice(0, 10) ?? '-'}</td>
-                <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
-                <td><a class="file-link" href="${fileUrl}" download="${fileName}">${fileName}</a></td>
-              </tr>`;
-          }).join('');
+        if (archiveRows) {
+          if (state.isLoading) {
+            archiveRows.innerHTML = `
+              <tr><td colspan="5"><div class="skeleton skeleton-line" style="width:18%;"></div></td></tr>
+              <tr><td colspan="5"><div class="skeleton skeleton-line" style="width:36%;"></div></td></tr>
+              <tr><td colspan="5"><div class="skeleton skeleton-line" style="width:28%;"></div></td></tr>
+            `;
+          } else {
+            const sorted = filteredArchives.slice().sort((a, b) => String(b.snapshot_month).localeCompare(String(a.snapshot_month)));
+            if (!sorted.length) {
+              archiveRows.innerHTML = `<tr><td colspan="5" class="empty-row">조건에 맞는 리포트가 없습니다.</td></tr>`;
+            } else {
+              archiveRows.innerHTML = sorted.map((row) => {
+                const statusLabel = row.report_status || (row.sent_flag === 'Y' ? '발송됨' : row.generated_flag === 'Y' ? '생성됨' : '미발송');
+                const badgeClass = statusLabel === '발송됨' ? 'green' : statusLabel === '생성됨' ? 'blue' : 'amber';
+                const fileName = resolveLatestReportFileName(row.snapshot_month, row.file_name);
+                const filePath = resolveLatestReportFilePath(row.snapshot_month, row.file_path);
+                const fileUrl = toFileHref(filePath) || new URL(`../reports/${fileName}`, window.location.href).href;
+                return `
+                  <tr>
+                    <td>${row.snapshot_month}</td>
+                    <td>${row.generated_at?.slice(0, 10) ?? row.snapshot_date ?? '-'}</td>
+                    <td>${row.sent_at?.slice(0, 10) ?? '-'}</td>
+                    <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
+                    <td><a class="file-link" href="${fileUrl}" download="${fileName}">${fileName}</a></td>
+                  </tr>`;
+              }).join('');
+            }
         }
       }
 
       const subscriptionRows = document.getElementById('subscription-body');
       if (subscriptionRows) {
+        if (state.isLoading) {
+          subscriptionRows.innerHTML = `
+            <tr><td><div class="skeleton skeleton-line" style="width:22%;"></div></td><td><div class="skeleton skeleton-line" style="width:58%;"></div></td><td><div class="skeleton skeleton-line" style="width:34%;"></div></td></tr>
+            <tr><td><div class="skeleton skeleton-line" style="width:18%;"></div></td><td><div class="skeleton skeleton-line" style="width:52%;"></div></td><td><div class="skeleton skeleton-line" style="width:32%;"></div></td></tr>
+          `;
+          return;
+        }
         const sortedAccounts = filteredSubscriptions.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
         if (!sortedAccounts.length) {
           subscriptionRows.innerHTML = `<tr><td colspan="3" class="empty-row">조건에 맞는 구독계정이 없습니다.</td></tr>`;
         } else {
-        subscriptionRows.innerHTML = sortedAccounts.map((row) => {
-          return `
-            <tr>
-              <td>${row.recipient_name}</td>
-              <td>${maskEmail(row.recipient_email)}</td>
-              <td>${row.created_at?.slice(0, 7) ?? '-'}</td>
-            </tr>`;
-        }).join('');
+          subscriptionRows.innerHTML = sortedAccounts.map((row) => {
+            const displayEmail = row.masked_email || row.recipient_email || '-';
+            return `
+              <tr>
+                <td>${row.recipient_name}</td>
+                <td>${displayEmail}</td>
+                <td>${row.created_at?.slice(0, 7) ?? '-'}</td>
+              </tr>`;
+          }).join('');
         }
       }
     }
@@ -1989,7 +2584,7 @@
       safeRender(() => renderTrendChart(ctx.windowSnapshots), 'trend');
       safeRender(() => renderChannelCard(ctx.currentClaims), 'channel');
       safeRender(() => renderTreatmentCard(ctx.currentClaims), 'treatment');
-      safeRender(() => renderChangeSummary(latest, prev, ctx.currentClaims), 'change-summary');
+      safeRender(() => renderChangeSummary(latest, prev, ctx.currentClaims, ctx.previousClaims), 'change-summary');
       safeRender(() => renderAutoPaymentTable(ctx.currentClaims), 'auto-type-table');
       renderArchive(state.reportArchives, state.subscriptions, {});
     }
@@ -2061,13 +2656,14 @@
     });
 
     async function loadDashboardData() {
-      const [snapshots, latestClaims, reportArchives, reportFileIndex] = await Promise.all([
+      const [snapshots, latestClaims, autoPaymentTypes, reportArchives, reportFileIndex] = await Promise.all([
         supaFetch('/rest/v1/monthly_auto_payment_snapshot_fact', '?select=*&order=snapshot_month.asc'),
         supaFetchAllPages(
           '/rest/v1/claim_payment_fact',
-          '?select=claim_month,receipt_channel,treatment_type,auto_payment_decision,auto_payment_type_code,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
+          '?select=claim_month,receipt_channel,treatment_type,hospital_type,diagnosis_code_primary,auto_payment_decision,auto_payment_type_code,segment_code,segment_name,segment_before,segment_after,segment_change_flag,segment_change_reason&order=claim_month.asc,claim_id.asc'
         ),
-        supaFetch('/rest/v1/report_archive_fact', '?select=*&order=snapshot_month.desc'),
+        supaFetch('/rest/v1/auto_payment_type_definition', '?select=type_code,type_name,active_flag,priority_order&order=priority_order.asc,type_code.asc'),
+        loadReportArchives(),
         loadReportFileIndex(),
       ]);
 
@@ -2075,11 +2671,13 @@
       state.latestSnapshot = snapshots[snapshots.length - 1];
       state.previousSnapshot = snapshots[snapshots.length - 2] || snapshots[snapshots.length - 1];
       state.allClaims = latestClaims;
+      state.autoPaymentTypes = autoPaymentTypes;
       state.reportArchives = reportArchives;
       state.reportFileIndex = reportFileIndex;
       state.subscriptions = await loadSubscriptionAccounts();
       state.filters.month = state.latestSnapshot?.snapshot_month || state.filters.month;
       state.performanceUnitCost = 1200;
+      state.isLoading = false;
       syncMonthOptions();
       syncArchiveMonthOptions();
       if (controlEls.period) controlEls.period.value = String(state.filters.periodMonths);

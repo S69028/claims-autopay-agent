@@ -37,7 +37,16 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ejgruldmrfbtalplwowr.supabase.co")
+def normalize_supabase_base_url(raw_value: str) -> str:
+    value = str(raw_value or "").strip().rstrip("/")
+    if value.endswith("/rest/v1"):
+        return value[: -len("/rest/v1")]
+    return value
+
+
+SUPABASE_URL = normalize_supabase_base_url(
+    os.environ.get("SUPABASE_URL", "https://ejgruldmrfbtalplwowr.supabase.co")
+)
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD")
 DEFAULT_REPORT_MONTH = "2025-12"
 DEFAULT_OUT = ROOT / "reports" / "monthly_auto_payment_report_2025-12.docx"
@@ -197,6 +206,25 @@ def top_items(counter: Counter, limit: int = 5) -> list[tuple[str, int]]:
     return counter.most_common(limit)
 
 
+def rate_rows_by_factor(rows: list[dict], factor_key: str) -> list[dict]:
+    total_by_value = group_count(rows, factor_key)
+    auto_by_value = group_count(rows, factor_key, lambda row: row.get("auto_payment_decision") == "AUTO_PAY")
+    values = sorted(set(total_by_value) | set(auto_by_value))
+    items = []
+    for value in values:
+        total = total_by_value.get(value, 0)
+        auto = auto_by_value.get(value, 0)
+        items.append(
+            {
+                "value": value,
+                "total": total,
+                "auto": auto,
+                "rate": pct(auto, total),
+            }
+        )
+    return [item for item in items if item["total"] > 0]
+
+
 def build_context(
     snapshots: list[dict],
     current_claims: list[dict],
@@ -323,18 +351,62 @@ def build_context(
             }
         )
 
+    factor_configs = [
+        {"key": "receipt_channel", "title": "접수채널"},
+        {"key": "treatment_type", "title": "진료구분"},
+        {"key": "hospital_type", "title": "병원종별"},
+        {"key": "diagnosis_code_primary", "title": "주상병코드"},
+    ]
+
+    factor_rows = []
+    for factor in factor_configs:
+        current = rate_rows_by_factor(current_claims, factor["key"])
+        previous_factor_rows = rate_rows_by_factor(previous_claims, factor["key"])
+        previous_map = {row["value"]: row for row in previous_factor_rows}
+        deltas = []
+        for row in current:
+            previous_row = previous_map.get(row["value"])
+            previous_rate = previous_row["rate"] if previous_row else None
+            delta_pp = None if previous_rate is None or row["rate"] is None else round(row["rate"] - previous_rate, 2)
+            deltas.append(
+                {
+                    **row,
+                    "previous_rate": previous_rate,
+                    "delta_pp": delta_pp,
+                }
+            )
+        deltas.sort(key=lambda item: abs(item["delta_pp"] or 0), reverse=True)
+        lead = deltas[0] if deltas else None
+        if lead and lead["previous_rate"] is not None and lead["rate"] is not None:
+            summary = (
+                f"{lead['value']}의 자동지급률이 {fmt_pct(lead['previous_rate'], 1)} → {fmt_pct(lead['rate'], 1)}로 "
+                f"{'상승' if (lead['delta_pp'] or 0) >= 0 else '하락'}했습니다."
+            )
+        else:
+            summary = "전월 대비 비교할 충분한 데이터가 없어 확인 필요입니다."
+        factor_rows.append(
+            {
+                "factor": factor["title"],
+                "lead_value": lead["value"] if lead else "-",
+                "previous_rate": lead["previous_rate"] if lead else None,
+                "current_rate": lead["rate"] if lead else None,
+                "delta_pp": lead["delta_pp"] if lead else None,
+                "summary": summary,
+            }
+        )
+
     summary_lines = [
         f"{report_month} 기준 자동지급률은 {fmt_pct(as_float(latest['auto_payment_rate']), 2)}이고 처리효율은 {fmt_pct(as_float(latest['processing_efficiency']), 2)}입니다.",
         f"전월 대비 자동지급률은 {fmt_pp(as_float(latest['auto_payment_rate_change']), 2)}, 처리효율은 {fmt_pp(as_float(latest['processing_efficiency_change']), 2)}로 집계되었습니다.",
     ]
     if str(latest.get("status_label")) == "안정":
-        summary_lines.append("segment 변화는 일부 있지만 전체 상태는 허용 범위 내로 판단되어 안정 상태로 표시했습니다.")
+        summary_lines.append("청구 특성 변화는 일부 있지만 전체 상태는 허용 범위 내로 판단되어 안정 상태로 표시했습니다.")
     else:
-        summary_lines.append("이번 월은 segment 또는 비율 변화가 커서 운영 해석을 함께 확인할 필요가 있습니다.")
+        summary_lines.append("이번 월은 청구 특성 또는 비율 변화가 커서 운영 해석을 함께 확인할 필요가 있습니다.")
 
     next_actions = [
-        "전월 대비 자동지급률 상승을 주도한 유형의 분포를 재확인한다.",
-        "segment 변경 사유가 `원인 확인 필요`로 남은 건은 운영관리자가 추가 확인한다.",
+        "전월 대비 자동지급률 상승을 주도한 청구 특성 요소의 분포를 재확인한다.",
+        "factor 변화가 큰 항목은 운영관리자가 추가 확인한다.",
     ]
     if current_manual:
         next_actions.append("인심사 건수와 제외 건수가 늘어난 채널은 별도 모니터링 대상으로 둔다.")
@@ -377,6 +449,7 @@ def build_context(
         "auto_type_rows": auto_type_rows,
         "exclusion_rows": exclusion_rows,
         "segment_rows": segment_rows,
+        "factor_rows": factor_rows,
         "summary_lines": summary_lines,
         "next_actions": next_actions,
         "current_claims": current_claims,
@@ -388,6 +461,7 @@ def build_context(
         "exclusion_type_names": exclusion_type_names,
         "overall_note": overall_note,
         "status_note": status_note,
+        "factor_note": "전월 대비 자동지급률을 변화시킨 청구 특성 요소를 점검합니다.",
         "channel_note": channel_note,
         "treatment_note": treatment_note,
         "type_note": type_note,
@@ -730,7 +804,33 @@ def build_document(ctx: dict) -> Document:
         row_size=12,
     )
 
-    add_text_paragraph(doc, [("2. ", {"bold": True}), ("유형별 상세 현황", {"bold": True})], size=12, bold=True)
+    add_text_paragraph(
+        doc,
+        [("2. ", {"bold": True}), ("청구 특성 변화", {"bold": True})],
+        size=12,
+        bold=True,
+    )
+    add_note_paragraph(doc, ctx["factor_note"])
+    add_table(
+        doc,
+        ["청구 특성", "주요 변화값", "전월 자동지급률", "당월 자동지급률", "변화(pp)", "해석"],
+        [
+            [
+                row["factor"],
+                row["lead_value"],
+                fmt_pct(row["previous_rate"], 1) if row["previous_rate"] is not None else "미계산",
+                fmt_pct(row["current_rate"], 1) if row["current_rate"] is not None else "미계산",
+                fmt_pp(row["delta_pp"], 1),
+                row["summary"],
+            ]
+            for row in ctx["factor_rows"]
+        ],
+        header_size=12,
+        row_size=12,
+    )
+    add_blank_paragraph(doc)
+
+    add_text_paragraph(doc, [("3. ", {"bold": True}), ("유형별 상세 현황", {"bold": True})], size=12, bold=True)
     add_text_paragraph(
         doc,
         [("☐", {"font_name": FONT_SYMBOL}), (" ", {}), ("자동지급", {}), (" ", {}), ("유형", {})],
@@ -756,7 +856,7 @@ def build_document(ctx: dict) -> Document:
     add_type_table(doc, ctx["exclusion_rows"])
     add_blank_paragraph(doc)
 
-    add_text_paragraph(doc, [("3. ", {"bold": True}), ("Action Item", {"bold": True})], size=12, bold=True)
+    add_text_paragraph(doc, [("4. ", {"bold": True}), ("Action Item", {"bold": True})], size=12, bold=True)
     for line in ctx["next_actions"]:
         add_note_paragraph(doc, line)
 

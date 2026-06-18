@@ -6,10 +6,13 @@
   "main": "server.mjs",
   "scripts": {
     "start": "node server.mjs",
-    "dev": "node server.mjs"
+    "dev": "node server.mjs",
+    "test": "python -m unittest discover -s tests"
+  },
+  "dependencies": {
+    "nodemailer": "^7.0.10"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {}
+  "license": "ISC"
 }
