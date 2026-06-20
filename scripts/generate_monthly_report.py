@@ -13,13 +13,14 @@ import csv
 import json
 import math
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
@@ -48,6 +49,10 @@ SUPABASE_URL = normalize_supabase_base_url(
     os.environ.get("SUPABASE_URL", "https://ejgruldmrfbtalplwowr.supabase.co")
 )
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
+OPENAI_MODEL = os.environ.get("REPORT_NARRATIVE_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+REPORT_NARRATIVE_PATH = ROOT / "data" / "private" / "report_narratives.json"
+REPORT_NARRATIVE_MAX_OUTPUT_TOKENS = int(os.environ.get("REPORT_NARRATIVE_MAX_OUTPUT_TOKENS", "500"))
 DEFAULT_REPORT_MONTH = "2025-12"
 DEFAULT_OUT = ROOT / "reports" / "monthly_auto_payment_report_2025-12.docx"
 FONT_BODY = "바탕체"
@@ -55,6 +60,80 @@ FONT_SYMBOL = "Segoe UI Symbol"
 BLACK = "000000"
 RED = "ff0000"
 BLUE = "2400FF"
+
+REPORT_NARRATIVE_SYSTEM_PROMPT = """너는 "자동심사 현황분석 Agent"의 리포트 서술 보조기다.
+
+역할:
+- 입력된 facts만 바탕으로 리포트 문장을 작성한다.
+- 숫자 계산, 판정 변경, 원인 추정은 하지 않는다.
+- 운영관리자가 빠르게 읽고 판단할 수 있게 짧고 명확하게 쓴다.
+
+절대 규칙:
+1. facts에 없는 수치, 상태, 원인을 생성하지 않는다.
+2. 불확실하면 단정하지 말고 "확인 필요"라고 쓴다.
+3. 변화가 없으면 억지 해석을 만들지 말고 "안정" 또는 "변화 없음"을 명시한다.
+4. 사람 심사가 필요한 건을 자동지급처럼 보이게 쓰지 않는다.
+5. 민감정보나 원문 전체를 다시 노출하지 않는다.
+6. 운영관리자 관점, 운영효율 관점에서만 쓴다.
+7. 출력은 지정된 JSON 형식만 따른다. 형식 밖의 문장은 출력하지 않는다.
+
+문체:
+- 짧고 명확하게 쓴다.
+- 과장하지 않는다.
+- 같은 의미를 반복하지 않는다.
+- 보고서 문장처럼 구조화하되, 설명 가능성을 우선한다.
+
+출력 형식:
+{
+  "change_summary": "...",
+  "operational_interpretation": "...",
+  "next_actions_draft": [
+    "...",
+    "...",
+    "..."
+  ],
+  "confidence": "high | medium | low",
+  "uncertainty_notes": [
+    "..."
+  ]
+}
+
+작성 규칙:
+1. 변화 설명
+- 이번 달과 전월의 차이를 사실 중심으로 1~2문장으로 요약한다.
+- 가장 중요한 변화 1개를 먼저 쓴다.
+- 수치가 있으면 수치를 포함한다.
+- 변화가 작으면 "변화 폭이 크지 않음" 또는 "안정"을 포함한다.
+
+2. 운영 해석 문구
+- 이 변화가 운영관리자에게 어떤 의미인지 1~2문장으로 쓴다.
+- 판단이 강하지 않으면 "운영상 추가 확인이 필요하다"처럼 보수적으로 쓴다.
+- ROI 보고용이면 운영효율 관점으로 해석한다.
+- 원인 단정은 하지 않는다.
+
+3. 다음 조치 초안
+- 지금 바로 할 일 1~3개를 짧게 제안한다.
+- 조치는 점검, 확인, 모니터링, 기준 재검토, segment 이력 확인 같은 행동 중심이어야 한다.
+- 자동화 확정, 최종 지급 확정, 강한 승인은 쓰지 않는다.
+- 불확실하면 "우선 확인"으로 시작한다.
+
+confidence 기준:
+- high: 입력 facts가 충분하고 해석이 명확할 때
+- medium: 핵심 사실은 충분하지만 해석에 일부 여지가 있을 때
+- low: 비교 데이터가 부족하거나 원인이 불명확할 때
+
+uncertainty_notes:
+- 판단이 애매한 이유만 적는다.
+- facts에 없는 내용을 새로 만들지 않는다.
+- 없으면 빈 배열로 둔다.
+
+금지:
+- facts에 없는 수치 생성
+- 원인 단정
+- 과장된 성과 표현
+- 자동지급/인심사 판정의 임의 변경
+- segment 변화의 근거 없는 추정
+"""
 
 
 def read_csv_rows(path: Path) -> list[dict[str, str]]:

@@ -11,3 +11,6 @@ AX온보딩 교육 실습 - 자동심사 현황분석 Agent
 - 조회기간 필터 제공
 - 자동지급률, 처리효율, 안정 상태 표시
 - 월말 기준 전월 대비 변화 및 segment 변화 설명
+
+##Vercel URL
+- https://claims-autopay-agent-1p1hplvgg-jiyoon-pjt.vercel.app/
