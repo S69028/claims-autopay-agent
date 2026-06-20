@@ -49,10 +49,16 @@ SUPABASE_URL = normalize_supabase_base_url(
     os.environ.get("SUPABASE_URL", "https://ejgruldmrfbtalplwowr.supabase.co")
 )
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_1swNgizDHWX6Dh7bwJ2WTg_t1qKUvBD")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
-OPENAI_MODEL = os.environ.get("REPORT_NARRATIVE_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+
+# LLM API 설정 (BIZROUTER 우선)
+LLM_API_KEY = os.environ.get("BIZROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY", "").strip()
+LLM_API_BASE = os.environ.get("BIZROUTER_BASE_URL", "https://api.openai.com/v1")
+LLM_MODEL = os.environ.get("BIZROUTER_MODEL") or os.environ.get("REPORT_NARRATIVE_MODEL", "gpt-4o-mini").strip() or "gpt-4o-mini"
+
+OPENAI_API_KEY = LLM_API_KEY  # 하위호환성
+OPENAI_MODEL = LLM_MODEL
 REPORT_NARRATIVE_PATH = ROOT / "data" / "private" / "report_narratives.json"
-REPORT_NARRATIVE_MAX_OUTPUT_TOKENS = int(os.environ.get("REPORT_NARRATIVE_MAX_OUTPUT_TOKENS", "500"))
+REPORT_NARRATIVE_MAX_OUTPUT_TOKENS = int(os.environ.get("REPORT_NARRATIVE_MAX_OUTPUT_TOKENS", "600"))
 DEFAULT_REPORT_MONTH = "2025-12"
 DEFAULT_OUT = ROOT / "reports" / "monthly_auto_payment_report_2025-12.docx"
 FONT_BODY = "바탕체"
@@ -219,6 +225,99 @@ def http_get_json(path: str) -> list[dict]:
     with urllib.request.urlopen(request, timeout=30) as response:
         text = response.read().decode("utf-8")
     return json.loads(text)
+
+
+def call_llm_factor_analysis(factor_type: str, factor_title: str, current_month: str, previous_month: str, comparisons: list[dict]) -> dict | None:
+    """LLM을 호출해서 factor 변화를 분석합니다."""
+    if not LLM_API_KEY:
+        return None
+
+    try:
+        system_prompt = """너는 "자동심사 현황분석 Agent"의 factor 분석 전문가다.
+
+역할:
+- 입력된 facts(청구 factor 변화)만 바탕으로 운영관리자용 분석을 작성한다.
+- 숫자 계산, 판정 변경, 원인 추정은 하지 않는다.
+- 운영관리자가 빠르게 읽고 판단할 수 있게 짧고 명확하게 쓴다.
+
+중요 원칙:
+1. 숫자와 판정은 절대 새로 만들지 말고 입력된 facts만 사용한다.
+2. 추정이 필요하면 "추정이지만" 또는 "추정" 표시를 한다.
+3. 불확실하면 단정하지 말고 "확인 필요"라고 쓴다.
+4. 변화가 없으면 억지로 의미를 만들지 말고 "안정" 또는 "변화 없음"을 명시한다.
+5. 운영관리자 관점에서만 쓴다. 과도한 기술 설명은 피한다.
+6. 자동지급률, 처리효율, 안정 상태, factor 변화의 해석을 우선한다.
+7. 사람 심사가 필요한 건을 자동지급처럼 보이게 쓰지 않는다.
+8. 민감정보나 원문 전체를 다시 노출하지 않는다.
+
+작성규칙:
+1. 변화 설명 (1~3문장) - 가장 중요한 변화를 수치와 함께. 변화가 작으면 "안정"을 포함.
+2. 운영 해석 (1~2문장) - 운영관리자에게 어떤 의미인지. 판단이 강하지 않으면 "확인이 필요"로 표현.
+3. 다음 조치 (1~3개) - 행동 중심. "우선 확인"으로 시작하면 불확실함 표현.
+
+출력 형식 (JSON):
+{
+  "change_summary": "...",
+  "operational_interpretation": "...",
+  "next_actions_draft": ["...", "...", "..."],
+  "confidence": "high | medium | low"
+}"""
+
+        comparison_text = "\n".join([
+            f"  • {c['value']}: {c['previous_rate']:.1f}% → {c['current_rate']:.1f}% "
+            f"({'상승' if c['delta'] >= 0 else '하락'} {c['delta']:+.1f}pp) "
+            f"[{c['current_total']}건 중 {c['current_auto']}건]"
+            for c in comparisons
+        ])
+
+        user_message = f"""다음 factor 변화를 분석해주세요.
+
+[Factor 정보]
+이름: {factor_title} ({factor_type})
+기준기간: {previous_month} → {current_month}
+
+[전월 대비 변화]
+{comparison_text}
+
+위 facts를 바탕으로 변화 설명, 운영 해석, 다음 조치를 JSON 형식으로 응답하세요."""
+
+        request_data = json.dumps({
+            "model": LLM_MODEL,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ],
+            "temperature": 0.3,
+            "max_tokens": 600,
+            "top_p": 1,
+        }).encode("utf-8")
+
+        url = f"{LLM_API_BASE}/chat/completions"
+        request = urllib.request.Request(
+            url,
+            data=request_data,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {LLM_API_KEY}",
+            },
+            method="POST",
+        )
+
+        with urllib.request.urlopen(request, timeout=60) as response:
+            text = response.read().decode("utf-8")
+
+        response_data = json.loads(text)
+        content = response_data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+        # JSON 파싱
+        json_match = re.search(r"\{[\s\S]*\}", content)
+        if json_match:
+            return json.loads(json_match.group())
+
+        return None
+    except Exception as e:
+        print(f"LLM analysis error for {factor_type}: {e}", file=sys.stderr)
+        return None
 
 
 def load_from_supabase(report_month: str) -> tuple[list[dict], list[dict], list[dict], list[dict], list[dict]]:
@@ -463,6 +562,29 @@ def build_context(
             )
         else:
             summary = "전월 대비 비교할 충분한 데이터가 없어 확인 필요입니다."
+
+        # LLM 분석 호출
+        llm_analysis = None
+        if deltas:
+            comparisons_for_llm = [
+                {
+                    "value": d["value"],
+                    "previous_rate": d["previous_rate"] if d["previous_rate"] is not None else 0.0,
+                    "current_rate": d["rate"] if d["rate"] is not None else 0.0,
+                    "delta": d["delta_pp"] if d["delta_pp"] is not None else 0.0,
+                    "current_total": d["total"],
+                    "current_auto": d["auto"],
+                }
+                for d in deltas[:3]  # 상위 3개만 전송
+            ]
+            llm_analysis = call_llm_factor_analysis(
+                factor["key"],
+                factor["title"],
+                report_month,
+                prev_month,
+                comparisons_for_llm,
+            )
+
         factor_rows.append(
             {
                 "factor": factor["title"],
@@ -471,6 +593,7 @@ def build_context(
                 "current_rate": lead["rate"] if lead else None,
                 "delta_pp": lead["delta_pp"] if lead else None,
                 "summary": summary,
+                "llm_analysis": llm_analysis,
             }
         )
 
@@ -907,6 +1030,32 @@ def build_document(ctx: dict) -> Document:
         header_size=12,
         row_size=12,
     )
+
+    # LLM 분석 결과 렌더링
+    for row in ctx["factor_rows"]:
+        if row.get("llm_analysis"):
+            analysis = row["llm_analysis"]
+            add_blank_paragraph(doc)
+            add_text_paragraph(
+                doc,
+                [(f"□ {row['factor']} ", {"bold": True})],
+                size=11,
+                bold=True,
+            )
+
+            if analysis.get("change_summary"):
+                add_text_paragraph(doc, [("변화 설명: ", {"bold": True})], size=11)
+                add_note_paragraph(doc, analysis["change_summary"])
+
+            if analysis.get("operational_interpretation"):
+                add_text_paragraph(doc, [("운영 해석: ", {"bold": True})], size=11)
+                add_note_paragraph(doc, analysis["operational_interpretation"])
+
+            if analysis.get("next_actions_draft"):
+                add_text_paragraph(doc, [("다음 조치: ", {"bold": True})], size=11)
+                for action in analysis["next_actions_draft"]:
+                    add_note_paragraph(doc, f"• {action}")
+
     add_blank_paragraph(doc)
 
     add_text_paragraph(doc, [("3. ", {"bold": True}), ("유형별 상세 현황", {"bold": True})], size=12, bold=True)
