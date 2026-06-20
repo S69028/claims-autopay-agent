@@ -1521,6 +1521,36 @@
       return `${prefix}${'*'.repeat(maskLen)}${suffix}@${domainPart}`;
     }
 
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function callLLMFactorAnalysis(factorData) {
+      const apiUrl = location.protocol === 'file:'
+        ? 'http://127.0.0.1:8787/api/analyze-factor'
+        : '/api/analyze-factor';
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(factorData),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || `HTTP ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.warn(`LLM factor analysis failed: ${error.message}`);
+        return null;
+      }
+    }
+
     function groupCount(rows, keyFn, predicate = () => true) {
       const map = new Map();
       rows.filter(predicate).forEach((row) => {
@@ -2265,54 +2295,112 @@
       });
 
       if (factorGrid) {
-        factorGrid.innerHTML = factorSummary.map((factor) => {
-          const badgeClass = factor.lead && Math.abs(factor.lead.delta) >= 5
-            ? (factor.lead.delta >= 0 ? 'green' : 'red')
-            : 'amber';
-          const badgeText = factor.lead
-            ? `${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp`
-            : 'N/A';
-          const rowsHtml = factor.rows.length
-            ? factor.rows.map((item) => {
-              const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
-              const direction = item.delta > 0 ? '상승' : item.delta < 0 ? '하락' : '변화 없음';
-              return `
-                <tr>
-                  <td class="factor-value">${item.value}</td>
-                  <td>${item.previousRate.toFixed(1)}%</td>
-                  <td>${item.rate.toFixed(1)}%</td>
-                  <td class="factor-delta"><span class="badge ${deltaClass}">${direction} ${item.delta >= 0 ? '+' : ''}${item.delta.toFixed(1)}pp</span></td>
-                </tr>`;
-            }).join('')
-            : `<tr><td colspan="4" class="empty-row" style="padding:10px 8px;">비교할 충분한 데이터가 없습니다.</td></tr>`;
-          const note = factor.lead
-            ? `${factor.lead.value} 기준 ${factor.lead.previousRate.toFixed(1)}% → ${factor.lead.rate.toFixed(1)}% (${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp)`
-            : '충분한 데이터가 없어 요약할 수 없습니다.';
-          return `
-            <article class="factor-card">
-              <div class="factor-card-head">
-                <div>
-                  <h4>${factor.title}</h4>
-                </div>
-                <span class="badge ${badgeClass}">${badgeText}</span>
-              </div>
-              <div class="factor-card-note">${factor.summary}</div>
-              <table class="factor-table">
-                <thead>
+        const renderFactorCards = async () => {
+          const cardPromises = factorSummary.map(async (factor) => {
+            const badgeClass = factor.lead && Math.abs(factor.lead.delta) >= 5
+              ? (factor.lead.delta >= 0 ? 'green' : 'red')
+              : 'amber';
+            const badgeText = factor.lead
+              ? `${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp`
+              : 'N/A';
+            const rowsHtml = factor.rows.length
+              ? factor.rows.map((item) => {
+                const deltaClass = item.delta > 0 ? 'green' : item.delta < 0 ? 'red' : 'amber';
+                const direction = item.delta > 0 ? '상승' : item.delta < 0 ? '하락' : '변화 없음';
+                return `
                   <tr>
-                    <th>값</th>
-                    <th>전월</th>
-                    <th>이번 달</th>
-                    <th>변화</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${rowsHtml}
-                </tbody>
-              </table>
-              <div class="factor-card-note">${note}</div>
-            </article>`;
-        }).join('');
+                    <td class="factor-value">${item.value}</td>
+                    <td>${item.previousRate.toFixed(1)}%</td>
+                    <td>${item.rate.toFixed(1)}%</td>
+                    <td class="factor-delta"><span class="badge ${deltaClass}">${direction} ${item.delta >= 0 ? '+' : ''}${item.delta.toFixed(1)}pp</span></td>
+                  </tr>`;
+              }).join('')
+              : `<tr><td colspan="4" class="empty-row" style="padding:10px 8px;">비교할 충분한 데이터가 없습니다.</td></tr>`;
+            const note = factor.lead
+              ? `${factor.lead.value} 기준 ${factor.lead.previousRate.toFixed(1)}% → ${factor.lead.rate.toFixed(1)}% (${factor.lead.delta >= 0 ? '+' : ''}${factor.lead.delta.toFixed(1)}pp)`
+              : '충분한 데이터가 없어 요약할 수 없습니다.';
+
+            let llmSection = '';
+            try {
+              const llmResponse = await callLLMFactorAnalysis({
+                factor_type: factor.key,
+                factor_title: factor.title,
+                current_month: latest?.snapshot_month || '',
+                previous_month: previous?.snapshot_month || getPreviousMonth(latest?.snapshot_month || ''),
+                comparisons: factor.rows.map((r) => ({
+                  value: r.value,
+                  current_rate: r.rate,
+                  previous_rate: r.previousRate,
+                  delta: r.delta,
+                  current_total: r.total,
+                  current_auto: r.auto,
+                })),
+                top_factor: factor.lead ? {
+                  value: factor.lead.value,
+                  delta: factor.lead.delta,
+                  direction: factor.lead.delta >= 0 ? '상승' : '하락',
+                } : null,
+              });
+
+              if (llmResponse && llmResponse.analysis) {
+                const { change_summary, operational_interpretation, next_actions_draft } = llmResponse.analysis;
+                llmSection = `
+                  <div class="llm-analysis" style="border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px;">
+                    <div class="llm-section">
+                      <h5 style="font-size:12px;margin:0 0 6px 0;color:var(--muted);font-weight:600;">변화 설명</h5>
+                      <p style="font-size:12px;color:var(--text);margin:0;line-height:1.5;">${escapeHtml(change_summary || '')}</p>
+                    </div>
+                    <div class="llm-section" style="margin-top:10px;">
+                      <h5 style="font-size:12px;margin:0 0 6px 0;color:var(--muted);font-weight:600;">운영 해석</h5>
+                      <p style="font-size:12px;color:var(--text);margin:0;line-height:1.5;">${escapeHtml(operational_interpretation || '')}</p>
+                    </div>
+                    <div class="llm-section" style="margin-top:10px;">
+                      <h5 style="font-size:12px;margin:0 0 6px 0;color:var(--muted);font-weight:600;">다음 조치</h5>
+                      <ul style="font-size:12px;color:var(--text);margin:0;padding-left:18px;line-height:1.5;">
+                        ${(next_actions_draft || []).map((action) => `<li>${escapeHtml(action)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  </div>`;
+              }
+            } catch (llmErr) {
+              console.error(`LLM analysis error for ${factor.key}:`, llmErr);
+            }
+
+            return `
+              <article class="factor-card">
+                <div class="factor-card-head">
+                  <div>
+                    <h4>${factor.title}</h4>
+                  </div>
+                  <span class="badge ${badgeClass}">${badgeText}</span>
+                </div>
+                <div class="factor-card-note">${factor.summary}</div>
+                <table class="factor-table">
+                  <thead>
+                    <tr>
+                      <th>값</th>
+                      <th>전월</th>
+                      <th>이번 달</th>
+                      <th>변화</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rowsHtml}
+                  </tbody>
+                </table>
+                <div class="factor-card-note">${note}</div>
+                ${llmSection}
+              </article>`;
+          });
+
+          const cards = await Promise.all(cardPromises);
+          factorGrid.innerHTML = cards.join('');
+        };
+
+        renderFactorCards().catch((err) => {
+          console.error('Factor grid rendering error:', err);
+          factorGrid.innerHTML = '<p style="padding:20px;color:var(--muted);font-size:12px;">factor 분석 중 오류가 발생했습니다.</p>';
+        });
       }
 
       const badges = document.querySelectorAll('.change-panel .callout .badge');

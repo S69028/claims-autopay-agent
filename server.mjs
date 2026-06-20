@@ -6,6 +6,7 @@ import {
   REPORT_FILE_INDEX_RUNTIME_PATH,
   handleSendMonthlyReport,
 } from './lib/report_send_api.mjs';
+import handleAnalyzeFactor from './api/analyze-factor.js';
 
 const PORT = Number(process.env.REPORT_API_PORT || 8787);
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -37,6 +38,10 @@ async function serverHandler(req, res) {
 
   if (pathname === '/api/send-monthly-report') {
     return handleSendMonthlyReport(req, res);
+  }
+
+  if (pathname === '/api/analyze-factor') {
+    return handleAnalyzeFactor(req, res);
   }
 
   if (pathname === '/data/private/report_file_index.json') {
