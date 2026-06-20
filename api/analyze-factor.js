@@ -1,7 +1,10 @@
 import https from 'https';
+import http from 'http';
+import { URL } from 'url';
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
-const OPENAI_MODEL = process.env.REPORT_NARRATIVE_MODEL || 'gpt-4o-mini';
+const API_KEY = process.env.BIZROUTER_API_KEY || process.env.OPENAI_API_KEY || '';
+const API_BASE = process.env.BIZROUTER_BASE_URL || 'https://api.openai.com/v1';
+const API_MODEL = process.env.BIZROUTER_MODEL || process.env.REPORT_NARRATIVE_MODEL || 'gpt-4o-mini';
 
 const FACTOR_ANALYSIS_SYSTEM_PROMPT = `너는 "자동심사 현황분석 Agent"의 factor 분석 전문가다.
 
@@ -48,10 +51,10 @@ const FACTOR_ANALYSIS_SYSTEM_PROMPT = `너는 "자동심사 현황분석 Agent"�
   "uncertainty_notes": ["..."]
 }`;
 
-function callOpenAI(systemPrompt, userMessage) {
+function callLLM(systemPrompt, userMessage) {
   return new Promise((resolve, reject) => {
     const requestBody = JSON.stringify({
-      model: OPENAI_MODEL,
+      model: API_MODEL,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
@@ -61,19 +64,26 @@ function callOpenAI(systemPrompt, userMessage) {
       top_p: 1,
     });
 
+    const apiUrl = new URL(API_BASE);
+    if (!apiUrl.pathname.includes('/chat/completions')) {
+      apiUrl.pathname = '/v1/chat/completions';
+    }
+
     const options = {
-      hostname: 'api.openai.com',
-      port: 443,
-      path: '/v1/chat/completions',
+      hostname: apiUrl.hostname,
+      port: apiUrl.port || (apiUrl.protocol === 'https:' ? 443 : 80),
+      path: apiUrl.pathname + apiUrl.search,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(requestBody),
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`,
       },
     };
 
-    const req = https.request(options, (res) => {
+    const requester = apiUrl.protocol === 'https:' ? https : http;
+
+    const req = requester.request(options, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
@@ -88,7 +98,7 @@ function callOpenAI(systemPrompt, userMessage) {
             resolve(content);
           }
         } catch (err) {
-          reject(new Error(`Failed to parse OpenAI response: ${err.message}`));
+          reject(new Error(`Failed to parse LLM response: ${err.message}`));
         }
       });
     });
@@ -161,8 +171,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (!OPENAI_API_KEY) {
-    res.status(500).json({ error: 'OPENAI_API_KEY not configured' });
+  if (!API_KEY) {
+    res.status(500).json({ error: 'API_KEY not configured (BIZROUTER_API_KEY or OPENAI_API_KEY)' });
     return;
   }
 
@@ -170,7 +180,7 @@ export default async function handler(req, res) {
     const factorData = req.body;
     const userMessage = buildUserMessage(factorData);
 
-    const llmResponse = await callOpenAI(FACTOR_ANALYSIS_SYSTEM_PROMPT, userMessage);
+    const llmResponse = await callLLM(FACTOR_ANALYSIS_SYSTEM_PROMPT, userMessage);
 
     let analysis = {};
     try {
